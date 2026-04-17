@@ -1,0 +1,104 @@
+.banner {
+    display: block;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.rowBanner {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    text-align: start;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-color: #004aad;
+    padding-bottom: 10px;
+}
+
+.colBanner {
+    padding: 30px 90px;
+    background-color: aliceblue;
+    display: flex;
+    flex-direction: column;
+    margin-right: 100px;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 1.5em;
+    line-height: 28px;
+    text-align: start;
+}
+
+.textContent {
+    display: block;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    line-height: 28px;
+    text-align: start;
+    column-gap: 24px;
+}
+
+.greeting {
+    display: block;
+    color: #004aad;
+    font-size: 20px;
+    line-height: 28px;
+    padding: 6px 12px;
+}
+
+.bannerp {
+    display: block;
+    color: #004aad;
+    font-size: 55px;
+    font-weight: 300;
+    line-height: 85px;
+    width: 460px;
+    padding: 6px 12px;
+}
+
+.bannerd {
+    color:rgb(80, 74, 74);
+    font-size: 20px;
+    line-height: 30px;
+}
+
+.features {
+    column-gap: 0;
+    display: flex;
+    flex-direction: row;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    justify-content: space-between;
+    line-height: 30px;
+    margin: 50px 0;
+    row-gap: 0;
+    width: 460px;
+}
+
+.featureicon {
+    align-items: center;
+    color: rgb(80, 74, 74);
+    column-gap: 15px;
+    display: flex;
+    row-gap: 15px;
+}
+
+.fimg {
+    display: block;
+    max-width: 50px;
+}
+
+.colBannerR {
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    background-color: aliceblue;
+}
+
+.bannerimage {
+    display: block;
+}
+
+
+
+

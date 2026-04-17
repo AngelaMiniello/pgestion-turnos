@@ -1,0 +1,20 @@
+.title {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 32px;
+  color: #004aad;
+}
+
+.appointmentsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 20px; 
+}
+
+.noAppointments {
+  font-size: 18px;
+  color: #666;
+  margin-top: 40px;
+}

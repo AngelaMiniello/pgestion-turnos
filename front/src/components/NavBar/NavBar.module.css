@@ -1,0 +1,51 @@
+.header {
+  background-image: url("/assets/img/navBackground.png");
+  background-size: contain;
+  height: 200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  height: 100px;
+  max-width: 500px;
+}
+
+.nav {
+  display: flex;
+  gap: 1.5rem;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  list-style: none;
+  justify-content: end;
+  align-items: center;
+  margin: 20px;
+}
+
+.nav a {
+  text-decoration: none;
+  color: aliceblue;
+}
+
+.nav a:hover {
+  color: #f891cb;
+}
+
+.logoutButton {
+  background-color: #a80b29;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+i {
+  height: 30px;
+  width: 30px;
+  cursor: pointer;
+  color: aliceblue;
+} 
