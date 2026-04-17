@@ -1,45 +1,116 @@
-# USER STORIES 
+# 🏥 Sistema de Gestión de Turnos
 
-1. **Autenticación de usuarios:**
--Como usuario anónimo o invitado quiero poder regristrarme y logearme dentro de la aplicación.
+Aplicación fullstack para la gestión de turnos médicos. Permite a los usuarios registrarse, iniciar sesión y administrar sus turnos de manera simple e intuitiva.
 
--Criterios de aceptación:
- -El usuario debe poder registrarse ingregando correo y contraseña.
- -El usuario debe poder loguearse ingregando correo y contraseña.
- -El usuario no debe poder agendar turnos sin estar registrado y logueado.
+---
 
-2. **Reservar turnos:**
--Como usuario autenticado quiero poder agendar un turno en una fecha y hora deseada.
+## 🚀 Tecnologías utilizadas
 
--Criterios de aceptación:
- -El usuario solo podrá seleccionar turnos entre 8am y 8pm, excluyendo los fines de semana.
- -No se podrán seleccionar turnos fuera de esos días y horarios. No se mostrarán en el calendario.
+### Frontend
 
-3. **Visualizar turnos:**
--Como usuario autenticado quiero poder ver mis turnos reservados y mis turnos pasados.
+* React
+* Vite
+* Tailwind CSS
+* Formik
+* Axios
 
--Criterios de aceptación:
- -El usuario podrá ver turnos futuros y pasados.
+### Backend
 
-4. **Cancelación de turnos:**
--Como usuario autenticado quiero poder cancelar un turno previamente reservado.
+* Node.js
+* Express
+* Base de datos relacional (según implementación)
 
--Criterios de aceptación:
- -Se le pedirá al usuario que las cancelaciones de turnos se realicen con 24hs de antelación.
- -Una vez cancelao el turno se modificara su estado a cancelado.
- -El usuario podrá cancelar su turno desde el mail recordatorio enviado 24hs antes del turno solicitado.
+---
 
-5. **Confirmación de reserva o cancelacipon:**
--Como usuario quiero:
-  -recibir un mail con la confirmación del turno solicitado.
-  -recibir un mail para la confirmación o cancelación del turno 4hs antes del turno solicitado.
+## ✨ Funcionalidades principales
 
-6. **Subir foto de perfil:**
--Como usuario quiero poder subir o modificar mi foto de perfil.
+* 🔐 Registro e inicio de sesión de usuarios
+* 👤 Perfil de usuario
+* 📅 Creación de turnos
+* 📋 Visualización de turnos
+* ❌ Cancelación de turnos
+* 🎨 Interfaz moderna y responsive
 
--Criterios de aceptación:
- -Tamaño mínimo de la imágen, formato.
+---
 
+## 🖥️ Demo
+
+> Próximamente deployado
+* 🎨 Interfaz  responsive
+---
+
+## ⚙️ Instalación local
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/AngelaMiniello/pgestion-turnos.git
+cd pgestion-turnos
+```
+
+---
+
+### 2. Backend
+
+```bash
+cd back
+npm install
+npm run start
+```
+
+---
+
+### 3. Frontend
+
+```bash
+cd front
+npm install
+npm run dev
+```
+
+---
+
+## 🔗 Variables de entorno
+
+Crear un archivo `.env` en la carpeta del backend:
+
+```env
+PORT=3000
+DB_URL=
+```
+
+---
+
+## 📁 Estructura del proyecto
+
+```
+/front   → Aplicación cliente (React)
+/back    → API REST (Node + Express)
+```
+
+---
+
+## 📌 Estado del proyecto
+
+Proyecto en desarrollo. Se continúan agregando mejoras en UI/UX y funcionalidades.
+
+---
+
+## 💡 Mejoras futuras
+
+* Edición de perfil
+* Notificaciones
+* Deploy completo
+* Manejo de roles (admin/usuario)
+
+---
+
+## 👩‍💻 Autor
+
+Angela Miniello
+[LinkedIn](https://www.linkedin.com/in/angela-miniello/) | [GitHub](https://github.com/AngelaMiniello)
+
+---
 
 
 
