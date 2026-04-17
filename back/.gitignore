@@ -1,0 +1,29 @@
+# dependencias
+node_modules/
+
+# compilación de TypeScript
+dist/
+build/
+
+# variables de entorno
+.env
+.env.local
+.env.*.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# sistema operativo
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+
+# caches
+*.tsbuildinfo
