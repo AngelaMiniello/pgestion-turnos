@@ -2,6 +2,8 @@ import { User } from "../entities/User";
 import UserDto from "../dto/User.Dto";
 import UserRepository from "../repositories/UserRepository";
 import CredentialRepository from "../repositories/CredentialsRepository";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 //  Crear usuario con credenciales automáticamente
 export const createUserService = async (userData: UserDto): Promise<User> => {
@@ -55,7 +57,7 @@ export const deleteUserService = async (id: number): Promise<void> => {
 // Login
 import { validateCredentialService } from "./Credentials.Service";
 
-export const loginUserService = async (username: string, password: string) => {
+export const loginUserService = async (username: string, password: string): Promise<{ user: User; token: string }> => {
   // Validar credenciales
   const credentialId = await validateCredentialService(username, password);
 
@@ -69,5 +71,15 @@ export const loginUserService = async (username: string, password: string) => {
     throw new Error("Usuario no encontrado para esas credenciales.");
   }
 
-  return user;
+   //  GENERAR TOKEN
+  const token = jwt.sign(
+    {
+      id: user.id,
+      username: username
+    },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "1h" }
+  );
+
+  return { user, token };
 };

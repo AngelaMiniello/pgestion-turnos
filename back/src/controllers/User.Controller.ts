@@ -71,10 +71,11 @@ export const loginUserController = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
 
-    const user = await loginUserService(username, password);
+    const { user, token } = await loginUserService(username, password);
 
     res.status(200).json({
       login: true,
+      token,
       user: {
         id: user.id,
         name: user.name,

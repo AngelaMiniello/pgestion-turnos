@@ -1,5 +1,7 @@
 import Credential from "../models/Credential";
 import User from "../models/Users";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const registerUserService = async (data: {
     name: string;
@@ -15,10 +17,12 @@ export const registerUserService = async (data: {
         active: true
     });
 
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
     //  Crear credencial asociada
     await Credential.create({
         username: data.username,
-        password: data.password,  // ideal usar bcrypt
+        password: hashedPassword,  //bcrypt
         userId: newUser.id
     });
 
@@ -28,14 +32,29 @@ export const registerUserService = async (data: {
 
 export const loginUserService = async (username: string, password: string) => {
     const credential = await Credential.findOne({ username });
-
+ 
     if (!credential) throw new Error("Usuario no encontrado");
 
-    if (credential.password !== password) {
-        throw new Error("Contraseña incorrecta");
+    const isMatch = await bcrypt.compare(password, credential.password);
+    
+    if (!isMatch) {
+      throw new Error("Contraseña incorrecta");
     }
 
     const user = await User.findOne({ id: credential.userId });
+    
+    // generar token
+    const token = jwt.sign(
+        {
+            id: user.id,
+            username: credential.username
+        },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "1h" }
+    );
 
-    return user;
+    return {
+        user,
+        token
+    };
 };
