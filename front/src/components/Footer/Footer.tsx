@@ -9,7 +9,7 @@ function Footer() {
           {/* Logo */}
           <div className="flex items-start justify-center md:justify-start">
             <img
-              src="/public/assets/img/circlelogo.svg"
+              src="/assets/img/circlelogo.svg"
               alt="logo"
               className="w-24 opacity-90"
             />
@@ -63,10 +63,10 @@ function Footer() {
           {/* Redes */}
           <div className="flex">
             <a className="text-[#1f4fbf] pt-2 rounded-full">
-              <img src="public/assets/img/ig.png"/>
+              <img src="/assets/img/ig.png"/>
             </a>
             <a className="text-[#1f4fbf] pt-2 rounded-full">
-              <img src="public/assets/img/ig.png"/>
+              <img src="/assets/img/f.png"/>
             </a>
           </div>
         </div>

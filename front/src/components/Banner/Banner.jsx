@@ -31,10 +31,6 @@ function Banner() {
 
       <a href="/">
       </a>
-
-      <nav>
-
-      </nav>
       </div>
     </div>
   );

@@ -279,11 +279,11 @@ function Specialties() {
   };
 
   return (
-    <section className="px-6 py-16 bg-[#f5f6f8] flex justify-center min-w-3xl">
-      <div className="min-w-4xl max-w-4xl mx-auto">
+    <section className="px-4 md:px-6 py-10 md:py-16 bg-[#f5f6f8] flex justify-center">
+      <div className="w-full max-w-4xl mx-auto">
         
         {/* Título */}
-        <h2 className="text-3xl font-bold text-[#1b2a57] mb-8 flex justify-start pb-8">
+        <h2 className="text-xl md:text-3xl font-bold text-[#1b2a57] mb-6 md:mb-8 flex justify-start pb-4 md:pb-8">
           Especialidades Médicas
         </h2>
 
@@ -298,7 +298,7 @@ function Specialties() {
                 {/* Botón */}
                 <button
                   onClick={() => toggle(item.id)}
-                  className="flex items-center gap-2 text-left w-full text-[#4b5563] font-medium bg-transparent hover:border-[#1b2a57]"
+                  className="flex items-center gap-2 text-left w-full text-[#4b5563] text-sm md:text-base font-medium bg-transparent hover:border-[#1b2a57]"
                 >
                   <ChevronRight
                     className={`transition-transform duration-300 ${
@@ -309,26 +309,26 @@ function Specialties() {
                 </button>
 
                 {isOpen && (
-                  <div className="mt-4 ml-6 space-y-6">
+                  <div className="mt-3 md:mt-4 ml-2 md:ml-6 space-y-4 md:space-y-6">
 
                     {item.sections.map((section, index) => (
                     <div key={index} className="space-y-3">
 
                       {/* Título */}
-                      <h4 className="font-semibold text-s pt-3">
+                      <h4 className="font-semibold text-sm md:text-base pt-4 md:pt-6">
                         {section.title}
                       </h4>
 
                       {/* Descripción */}
-                      <p className="text-sm text-gray-600 leading-relaxed pt-3">
+                      <p className="text-xs md:text-sm text-gray-600 leading-relaxed pt-2 md:pt-3">
                        {section.description}
                       </p>
 
-        {/* Lista */}
-        <ul className="space-y-2 pt-3">
+                      {/* Lista */}
+        <ul className="space-y-2 pt-2 md:pt-3">
           {section.studies.map((study, i) => (
-            <li key={i} className="flex gap-2 text-sm">
-              <Check size={15}/> {study}
+            <li key={i} className="flex gap-2 text-xs md:text-sm">
+              <Check className="w-4 h-4 mt-1 shrink-0"/> {study}
             </li>
           ))}
         </ul>

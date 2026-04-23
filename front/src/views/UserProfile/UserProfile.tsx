@@ -17,13 +17,19 @@ function UserProfile() {
    const fetchUser = async () => {
   try {
     const stored = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
 
-    if (!stored) return;
+    if (!stored || !token) return;
 
     const parsed: { id: number } = JSON.parse(stored);
 
     const response = await axios.get(
-      `http://localhost:3000/users/${parsed.id}`
+      `http://localhost:3000/users/${parsed.id}`,
+      {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
     );
 
     setUser(response.data);

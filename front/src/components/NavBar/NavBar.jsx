@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
 import styles from "./NavBar.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ServicesMenu from "./ServicesMenu";
 
 function NavBar() {
   const [ user, setUser ] = useState(null);
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const getUser = () => {
@@ -22,6 +24,20 @@ function NavBar() {
     setUser(null);
     navigate("/");
   };
+  
+  useEffect(() => {
+  function handleClickOutside(event) {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  }
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
 
   return (
     <header className={styles.header}>
@@ -33,9 +49,20 @@ function NavBar() {
         />
       </Link>
 
+      <button
+        className={styles.menuButton}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        ☰
+      </button>
+
       <nav>
-        <ul className={styles.nav}>
-          <li><Link to="/">Inicio</Link></li>
+        <ul ref={menuRef}
+          className={`${styles.nav} ${
+    isOpen ? styles.navOpen : styles.navClosed
+  }`}
+>
+          <li className="cursor-pointer text-[17px] text-gray-50 hover:text-[#f891cb] font-sans"><Link to="/">Inicio</Link></li>
           {user ?  (
             <>
               <li>
@@ -53,7 +80,13 @@ function NavBar() {
             <li>
             <Link
               to="/portal"
-              className="rounded-md bg-[#a80b29]  px-6 py-3 text-white font-medium shadow-sm transition"
+              className="
+  block w-full text-center
+  rounded-md bg-[#a80b29] 
+  px-4 py-2 text-sm
+  md:px-6 md:py-3 md:text-base
+  text-white font-medium shadow-sm transition
+"
             >
               Portal de turnos
             </Link>
@@ -61,6 +94,8 @@ function NavBar() {
             </>)}
         </ul>
       </nav>
+
+     
     </header>
   );
 }

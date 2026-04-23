@@ -18,3 +18,27 @@
   color: #666;
   margin-top: 40px;
 }
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+  .title {
+    font-size: 20px;       
+    margin-top: 20px;     
+    padding: 0 10px;       
+  }
+
+  .appointmentsContainer {
+    padding: 15px;        
+    gap: 15px;             
+    width: 100%;        
+  }
+
+  .noAppointments {
+    font-size: 15px;    
+    margin-top: 20px;
+    text-align: center;
+    padding: 0 10px;
+  }
+
+}

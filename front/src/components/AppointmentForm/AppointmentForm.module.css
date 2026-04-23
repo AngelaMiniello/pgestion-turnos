@@ -59,3 +59,42 @@
     font-size: 16px;
     cursor: pointer;
 }
+
+/*  MOBILE */
+@media (max-width: 768px) {
+
+  .title {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #1b2a57;
+    font-weight: bold;
+}
+
+  .formContainer {
+    width: 90%;          
+    margin: 20px auto;   
+    padding: 15px;        
+  }
+
+  .title {
+    font-size: 20px;     
+    text-align: center;
+  }
+
+  .selectionContainer {
+    max-width: 100%;   
+  }
+
+  .field,
+  .option {
+    font-size: 14px;    
+    padding: 8px;
+  }
+
+  .button {
+    width: 100%;        
+    padding: 12px;
+    font-size: 15px;
+  }
+
+}

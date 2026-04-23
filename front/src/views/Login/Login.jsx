@@ -22,12 +22,17 @@ function Login() {
 
       console.log("RESPUESTA LOGIN DESDE FRONT:", response.data);
 
+      localStorage.setItem("token", response.data.token);
       localStorage.setItem(
         "user",
         JSON.stringify({
           id: response.data.user.id
         })
       );
+
+      if (!response.data?.token || !response.data?.user) {
+        throw new Error("Respuesta inválida del servidor");
+      }
 
       alert("Inicio de sesión exitoso");
 

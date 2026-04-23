@@ -14,7 +14,7 @@ const features = [
     description:
       "Acompañamos a cada paciente de manera cercana, brindando contención y seguimiento en cada etapa.",
     icon: HeartPulse,
-    image: "public/assets/img/personalizada.png"
+    image: "/assets/img/personalizada.png"
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ const features = [
     description:
       "Contamos con equipamiento moderno que permite diagnósticos rápidos y precisos.",
     icon: Monitor,
-    image: "public/assets/img/Tecnología.png"
+    image: "/assets/img/Tecnología.png"
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ const features = [
     description:
       "Trabajamos con altos estándares para garantizar resultados confiables y seguros.",
     icon: ShieldCheck,
-    image: "public/assets/img/Calidad.png"
+    image: "/assets/img/Calidad.png"
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ const features = [
     description:
       "Accedé a turnos, estudios y resultados desde nuestra plataforma online.",
     icon: Smartphone,
-    image: "public/assets/img/Digital.png"
+    image: "/assets/img/Digital.png"
   },
   {
     id: 5,
@@ -46,7 +46,7 @@ const features = [
     description:
       "Análisis clínicos con tecnología avanzada para mayor precisión.",
     icon: FlaskConical,
-    image: "public/assets/img/Laboratorios.png"
+    image: "/assets/img/Laboratorios.png"
   },
   {
     id: 6,
@@ -54,7 +54,7 @@ const features = [
     description:
       "Equipo médico altamente capacitado en múltiples especialidades.",
     icon: Users,
-    image: "public/assets/img/Equipo.png"
+    image: "/assets/img/Equipo.png"
   }
 ];
 

@@ -51,7 +51,7 @@ useEffect(() => {
 return (
   <>
     <div className="p-8">
-      <h1 className="text-4xl font-bold tracking-tight text-[#1b2a57] md:text-5xl text-center">Mis Turnos</h1>
+      <h1 className="text-3xl font-bold tracking-tight text-[#1b2a57] md:text-4xl text-center">Mis Turnos</h1>
 
       <AppointmentForm onAddAppointment={handlerAddAppointment} />
 
