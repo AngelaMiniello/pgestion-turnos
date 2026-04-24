@@ -9,27 +9,32 @@ dotenv.config();
 
 const isProduction = !!process.env.DATABASE_URL;
 
-export const AppDataSource = new DataSource({
-  type: "postgres",
+export const AppDataSource = new DataSource(
+  isProduction
+    ? {
+        type: "postgres",
+        url: process.env.DATABASE_URL as string,
 
-  // 👉 producción (Render)
-  url: process.env.DATABASE_URL,
+        synchronize: true,
+        logging: false,
+        entities: [User, Credential, Appointment],
+        subscribers: [],
+        migrations: [],
 
-  // 👉 local (tu compu)
-  host: process.env.DB_HOST || "localhost",
-  port: Number(process.env.DB_PORT) || 5432,
-  username: process.env.DB_USER || "postgres",
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME || "gestor_turnos",
+        ssl: { rejectUnauthorized: false },
+      }
+    : {
+        type: "postgres",
+        host: process.env.DB_HOST || "localhost",
+        port: Number(process.env.DB_PORT) || 5432,
+        username: process.env.DB_USER || "postgres",
+        password: process.env.DB_PASSWORD || "",
+        database: process.env.DB_NAME || "gestor_turnos",
 
-  synchronize: true,
-  logging: false,
-  entities: [User, Credential, Appointment],
-  subscribers: [],
-  migrations: [],
-
-  // 🔥 clave para Render
-  ssl: isProduction
-    ? { rejectUnauthorized: false }
-    : false,
-});
+        synchronize: true,
+        logging: false,
+        entities: [User, Credential, Appointment],
+        subscribers: [],
+        migrations: [],
+      }
+);
