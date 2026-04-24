@@ -43,6 +43,14 @@ export const loginUserService = async (username: string, password: string) => {
 
     const user = await User.findOne({ id: credential.userId });
     
+    if (!user) {
+      throw new Error("Usuario no encontrado");
+    }
+
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET no definido");
+    } 
+    
     // generar token
     const token = jwt.sign(
         {
