@@ -15,7 +15,7 @@ useEffect(() => {
   const getAllAppointments = async (id) => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:3000/appointments?userId=${user.id}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/appointments?userId=${user.id}`);
       setAppointments(response.data);
     } catch (error) {
       console.error(error);

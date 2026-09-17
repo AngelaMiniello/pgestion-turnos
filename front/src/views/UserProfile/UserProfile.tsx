@@ -24,7 +24,7 @@ function UserProfile() {
     const parsed: { id: number } = JSON.parse(stored);
 
     const response = await axios.get(
-      `http://localhost:3000/users/${parsed.id}`,
+      `${import.meta.env.VITE_API_URL}/users/${parsed.id}`,
       {
           headers: {
             Authorization: `Bearer ${token}`

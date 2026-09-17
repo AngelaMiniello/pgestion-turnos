@@ -19,7 +19,7 @@ function AppointmentForm({onAddAppointment}) {
   }
 
   try {
-    const response = await axios.post("http://localhost:3000/appointments", {
+    const response = await axios.post( `${import.meta.env.VITE_API_URL}/appointments`, {
       ...values,
       userId: user.id
     });

@@ -36,18 +36,24 @@ function Register() {
     return alert("Hay errores en el formulario");
   }
 
+  console.log("Mi URL de Backend es:", import.meta.env.VITE_API_URL);
+
   try {
-    const credResponse = await axios.post("http://localhost:3000/credentials", {
+    // 1. Creo las credenciales
+    const credResponse = await axios.post(`${import.meta.env.VITE_API_URL}/credentials`, {
       username: form.username,
       password: form.password,
     });
 
     const credentialId = credResponse.data.credentialId;
 
+    // 2. Creo el usuario vinculando la credencial y mandando TODOS los campos
     const userResponse = await axios.post(
-      "http://localhost:3000/users/register",
+      `${import.meta.env.VITE_API_URL}/users/register`,
       {
         name: form.name,
+        username: form.name,
+        password: form.password,
         email: form.email,
         birthdate: form.birthdate,
         nDni: form.nDni,

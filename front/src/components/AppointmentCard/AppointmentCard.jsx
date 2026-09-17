@@ -5,7 +5,7 @@ const Appointment = ({id, time, date, status, onCancel}) => {
     const handleCancel = async () => {
         // Lógica para cancelar el turno
         try {
-            axios.put(`http://localhost:3000/appointments/cancel/${id}`)
+            axios.put(`${import.meta.env.VITE_API_URL}/appointments/cancel/${id}`)
             alert("Turno cancelado con éxito");
             onCancel(id);
         } catch (error) {
