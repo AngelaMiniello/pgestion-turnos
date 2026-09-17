@@ -60,24 +60,24 @@ const features = [
 
 function ChooseSection() {
   return (
-    <section className="bg-[#f7faff] py-20 px-5 sm:px-6 lg:px-8 lg:py-24 w-full">
+    <section className="bg-[#f7faff] py-20 px-5 sm:px-6 lg:px-8 lg:py-24">
       <div className="mx-auto w-full max-w-6xl">
         
         {/* Header */}
         <div className="text-center mb-14 flex flex-col items-center">
-          <span className="mb-3 rounded-full bg-[#e8f2ff] px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
+          <span className="mb-5 rounded-full bg-[#e8f2ff] px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
             Nuestra propuesta 
           </span>
 
-          <h2 className="m-0 text-4xl font-bold leading-tight tracking-tight text-[#073b7a] sm:text-5xl">
+          <h2 className="m-0 text-3xl font-bold leading-tight tracking-tight text-[#073b7a] sm:text-5xl">
             ¿Por qué elegirnos?
           </h2>
 
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#68758a] sm:text-lg">
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#68758a] sm:text-lg">
             Queremos verte bien
           </p>
 
-          <div className="mt-5 h-1 w-14 rounded-full bg-[#a80b29]" />
+          <div className="mt-5 mb-5 h-1 w-24 rounded-full bg-[#a80b29]" />
         </div>
 
         {/* Cards */}
