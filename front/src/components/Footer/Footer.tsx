@@ -4,7 +4,7 @@ function Footer() {
       <div className="mx-auto max-w-7xl">
         
         {/* Top */}
-        <div className="grid gap-12 md:grid-cols-3 pb-4">
+        <div className="grid gap-12 md:grid-cols-3 pb-4 mb-4">
           
           {/* Logo */}
           <div className="flex items-start justify-center md:justify-start">
