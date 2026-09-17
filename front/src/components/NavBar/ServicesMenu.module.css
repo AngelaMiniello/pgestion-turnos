@@ -5,7 +5,7 @@
 .servicesButton { 
     display: flex; 
     align-items: center; 
-    gap: 5px; 
+    gap: 6px; 
     padding: 10px 14px; 
     color: #ffffff; 
     background: transparent; 
@@ -33,10 +33,10 @@
 /* ------------------------- DROPDOWN ------------------------- */ 
 .dropdown { 
     position: absolute; 
-    top: calc(100% + 10px); 
+    top: 100%; 
     left: 0; 
     width: 230px;
-    padding: 8px; 
+    padding-top: 8px;
     background: #ffffff; 
     border: 1px solid #e6edf7; 
     border-radius: 14px; 
