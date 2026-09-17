@@ -82,7 +82,7 @@ function ServicesSection() {
               <article
         
                 key={service.id}
-                className={`rounded-md border p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg ${
+                className={`rounded-lg border p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg ${
                   service.featured
                     ? "border-[#dce6f8] bg-[#eef5fb]"
                     : "border-[#dce6f8] bg-white"
