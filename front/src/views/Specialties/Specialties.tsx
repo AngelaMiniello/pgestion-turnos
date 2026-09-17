@@ -279,7 +279,7 @@ function Specialties() {
   };
 
   return ( 
-    <section className="flex w-full justify-center bg-[#f5f6f8] px-5 py-16 sm:px-6 lg:px-8 lg:py-20"> 
+    <section className="box-border flex w-full justify-center bg-[#f5f6f8] px-5 py-16 sm:px-6 lg:px-8 lg:py-20"> 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-4"> 
         
         {/* Header */} 
@@ -316,7 +316,7 @@ function Specialties() {
                 type="button" 
                 onClick={() => toggle(item.id)} 
                 aria-expanded={isOpen} 
-                className=" flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition-colors duration-200 hover:bg-[#f8fbff] sm:px-7"
+                className="flex w-full items-center justify-between gap-4 rounded-2xl px-5 py-5 text-left transition-colors duration-200 hover:bg-[#f8fbff] focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#004aad]/25 sm:px-7"
               > 
                 
                 <div className="flex min-w-0 items-center gap-4">   
