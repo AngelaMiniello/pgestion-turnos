@@ -68,7 +68,7 @@ function ServicesSection() {
             Clínica Inmaculado
           </p>
 
-          <h2 className="mt-3 text-4xl font-bold tracking-tight text-[#1b2a57] md:text-5xl">
+          <h2 className="mt-3 text-4xl font-bold tracking-tight text-[#1b2a57] md:text-5xl sm:text-5xl">
             Nuestros Servicios
           </h2>
         </div>

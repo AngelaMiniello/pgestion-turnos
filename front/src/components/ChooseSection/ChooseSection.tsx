@@ -60,24 +60,24 @@ const features = [
 
 function ChooseSection() {
   return (
-    <section className="flex w-full justify-center bg-white px-5 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <div className="mx-auto w-full max-w-6xl gap-4">
+    <section className="flex w-full justify-center bg-white px-5 py-16 sm:px-6 lg:px-8 lg:py-20"> 
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4"> 
         
-        {/* Header */}
-        <div className="text-center flex flex-col items-center gap-3">
+        {/* Header */} 
+        <div className="flex flex-col items-center text-center gap-3"> 
           <span className="mb-10 rounded-full bg-[#e8f2ff] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
             Nuestra propuesta 
-          </span>
+          </span> 
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#073b7a] sm:text-5xl"> 
+            ¿Por qué elegirnos? 
+          </h2> 
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-[#68758a] sm:text-lg"> 
+            Queremos verte bien 
+          </p> 
+        </div> 
 
-          <h2 className="mt-3 text-4xl font-bold tracking-tight text-[#1b2a57] md:text-5xl sm:text-5xl">
-            ¿Por qué elegirnos?
-          </h2>
-
-          <p className="mt-8 max-w-2xl text-base leading-relaxed text-[#68758a] sm:text-lg">
-            Queremos verte bien
-          </p>
-        </div>
-        <div className="mt-8 mb-16 h-1 w-24 rounded-full bg-[#a80b29]"/>
+        {/* Separador */} 
+        <div className="h-1 w-24 rounded-full bg-[#a80b29]" />
 
         {/* Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
