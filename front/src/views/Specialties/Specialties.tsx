@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronRight, Check } from "lucide-react";
+import { ChevronDown, Check, Stethoscope } from "lucide-react";
 
 const specialties = [
   {
@@ -272,80 +272,128 @@ const specialties = [
 ];
 
 function Specialties() {
-  const [openId, setOpenId] = useState(null);
+  const [openId, setOpenId] = useState<number | null>(null);
 
-  const toggle = (id) => {
+  const toggle = (id: number) => {
     setOpenId(openId === id ? null : id);
   };
 
-  return (
-    <section className="px-4 md:px-6 py-10 md:py-16 bg-[#f5f6f8] flex justify-center">
-      <div className="w-full max-w-4xl mx-auto">
+  return ( 
+    <section className="flex w-full justify-center bg-[#f5f6f8] px-5 py-16 sm:px-6 lg:px-8 lg:py-20"> 
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4"> 
         
-        {/* Título */}
-        <h2 className="text-xl md:text-3xl font-bold text-[#1b2a57] mb-6 md:mb-8 flex justify-start pb-4 md:pb-8">
-          Especialidades Médicas
-        </h2>
-
-        {/* Lista */}
-        <div className="space-y-3">
-          {specialties.map((item) => {
-            const isOpen = openId === item.id;
-
-            return (
-              <div key={item.id} className="pb-3 pt-3">
+        {/* Header */} 
+        <div className="flex flex-col items-center gap-3 text-center"> 
+          <span className="mb-8 rounded-full bg-[#e8f2ff] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
+            Clínica Inmaculado 
+          </span> 
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-[#073b7a] sm:text-5xl"> 
+            Especialidades Médicas 
+          </h2> 
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#68758a] sm:text-lg"> 
+            Contamos con profesionales especializados para acompañarte en cada etapa de tu cuidado. 
+          </p> 
+        </div> 
+        
+        {/* Separador */} 
+        <div className="mx-auto mt-6 h-1 w-24 rounded-full bg-[#a80b29]" /> 
+        
+        {/* Especialidades */} 
+        <div className="mx-auto mt-10 w-full max-w-5xl space-y-3"> 
+          {specialties.map((item) => { const isOpen = openId === item.id; 
+          
+          return ( 
+            <article 
+              key={item.id} 
+              className={` overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${ 
+                isOpen ? "border-[#cfe0f7] shadow-[0_12px_35px_rgba(0,55,120,0.10)]" 
+                : "border-[#e5eaf1] shadow-[0_4px_15px_rgba(0,55,120,0.04)] hover:border-[#d3e2f5] hover:shadow-[0_8px_25px_rgba(0,55,120,0.08)]" 
+              } `} 
+            > 
+              
+              {/* Botón */} 
+              <button 
+                type="button" 
+                onClick={() => toggle(item.id)} 
+                aria-expanded={isOpen} 
+                className=" flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition-colors duration-200 hover:bg-[#f8fbff] sm:px-7"
+              > 
                 
-                {/* Botón */}
-                <button
-                  onClick={() => toggle(item.id)}
-                  className="flex items-center gap-2 text-left w-full text-[#4b5563] text-sm md:text-base font-medium bg-transparent hover:border-[#1b2a57]"
-                >
-                  <ChevronRight
-                    className={`transition-transform duration-300 ${
-                      isOpen ? "rotate-90" : ""
-                    }`}
-                  />
-                  {item.name}
-                </button>
-
-                {isOpen && (
-                  <div className="mt-3 md:mt-4 ml-2 md:ml-6 space-y-4 md:space-y-6">
-
-                    {item.sections.map((section, index) => (
-                    <div key={index} className="space-y-3">
-
-                      {/* Título */}
-                      <h4 className="font-semibold text-sm md:text-base pt-4 md:pt-6">
-                        {section.title}
-                      </h4>
-
-                      {/* Descripción */}
-                      <p className="text-xs md:text-sm text-gray-600 leading-relaxed pt-2 md:pt-3">
-                       {section.description}
-                      </p>
-
-                      {/* Lista */}
-        <ul className="space-y-2 pt-2 md:pt-3">
-          {section.studies.map((study, i) => (
-            <li key={i} className="flex gap-2 text-xs md:text-sm">
-              <Check className="w-4 h-4 mt-1 shrink-0"/> {study}
-            </li>
-          ))}
-        </ul>
-
-      </div>
-    ))}
-
-  </div>
-)}
-              </div>
-            );
-          })}
-        </div>
-
-      </div>
-    </section>
-  );
+                <div className="flex min-w-0 items-center gap-4">   
+                  {/* Icono */} 
+                  <div className={` flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300 ${ 
+                  isOpen ? "bg-[#004aad] text-white" 
+                  : "bg-[#e8f2ff] text-[#004aad]"
+                } `} > 
+                  <Stethoscope size={20} strokeWidth={2} /> 
+                  </div> 
+                
+                  {/* Nombre */} 
+                  <span className={` text-base font-semibold transition-colors duration-200 sm:text-lg ${ 
+                  isOpen ? "text-[#004aad]" 
+                  : "text-[#1f3557]" 
+                } `} > 
+                  {item.name} 
+                  </span> 
+                </div> 
+                
+                {/* Chevron */} 
+                <div className={` flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${ 
+                  isOpen ? "bg-[#e8f2ff] text-[#004aad]" 
+                  : "bg-[#f5f7fa] text-[#68758a]" 
+                } `} > 
+                  <ChevronDown size={19} className={`transition-transform duration-300 ${ isOpen ? "rotate-180" : "" }`} /> 
+                </div> 
+              </button> 
+                
+                {/* Contenido */} 
+                {isOpen && ( 
+                  <div className="border-t border-[#edf1f6] bg-[#fbfdff] px-5 pb-7 pt-6 sm:px-7"> 
+                    <div className="space-y-8"> 
+                      {item.sections.map((section, index) => ( 
+                        <div key={index} className="space-y-4"> 
+              
+                          {/* Título de sección */} 
+                          {section.title && ( 
+                            <h3 className="text-lg font-bold text-[#073b7a] sm:text-xl"> 
+                          {section.title}
+                            </h3> )} 
+                        
+                            {/* Descripción */} 
+                            <p className="text-sm leading-7 text-[#68758a] sm:text-base"> 
+                          {section.description} 
+                            </p> 
+                        
+                            {/* Estudios */} 
+                            {section.studies.length > 0 && ( 
+                          <div> 
+                            <p className="mb-4 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
+                              Prácticas y estudios 
+                            </p> 
+                            <ul className="space-y-3"> 
+                              {section.studies.map((study, i) => ( 
+                                <li key={i} className="flex items-start gap-3 text-sm leading-6 text-[#4b5563] sm:text-[15px]" > 
+                                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#e8f2ff] text-[#004aad]"> 
+                                    <Check size={13} strokeWidth={2.5} /> 
+                                  </span> 
+                                  <span>{study}</span> 
+                                </li> 
+                              ))}
+                            </ul> 
+                          </div> 
+                            )} 
+                        </div> 
+                      ))} 
+                    </div> 
+                  </div> 
+                )} 
+            </article> 
+          ); 
+          })} 
+        </div> 
+      </div> 
+    </section> 
+  ); 
 }
 
 export default Specialties;
