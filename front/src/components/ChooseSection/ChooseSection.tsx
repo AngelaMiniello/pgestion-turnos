@@ -64,7 +64,7 @@ function ChooseSection() {
       <div className="mx-auto w-full max-w-6xl">
         
         {/* Header */}
-        <div className="text-center mb-20 flex flex-col items-center">
+        <div className="text-center mb-20 flex flex-col items-center gap-4">
           <span className="mb-10 rounded-full bg-[#e8f2ff] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
             Nuestra propuesta 
           </span>

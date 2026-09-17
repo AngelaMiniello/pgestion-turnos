@@ -64,7 +64,7 @@ function ServicesSection() {
     <section className="bg-[#f5f6f8] px-4 py-16 md:px-8 lg:px-12 flex justify-center">
       <div className="w-full max-w-7xl flex flex-col gap-4">
         <div className="text-center flex flex-col items-center gap-3">
-          <p className="text-sm font-semibold uppercase tracking-wider text-[#1f4fbf]">
+          <p className="mb-10 rounded-full bg-[#e8f2ff] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-[#004aad]">
             Clínica Inmaculado
           </p>
 

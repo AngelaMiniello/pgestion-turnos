@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="bg-[#1f4fbf] text-white px-6 py-16 flex justify-center">
+    <footer className="bg-[#1f4fbf] text-white px-6 py-16 flex justify-center gap-4">
       <div className="mx-auto max-w-7xl">
         
         {/* Top */}

@@ -1,6 +1,6 @@
 function QuoteSection() {
   return (
-    <section className="flex w-full items-center justify-center bg-[#f7faff] px-5 py-20 sm:px-8 lg:py-24">
+    <section className="flex w-full items-center justify-center bg-[#f7faff] px-5 py-20 sm:px-8 lg:py-24 gap-4">
       <div className="relative mx-auto max-w-4xl text-center">
 
         {/* Cita */}
