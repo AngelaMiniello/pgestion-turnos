@@ -60,7 +60,7 @@ const features = [
 
 function ChooseSection() {
   return (
-    <section className="flex w-full justify-center bg-white px-5 py-20 sm:px-6 lg:px-8 lg:py-24">
+    <section className="flex w-full justify-center bg-white px-5 py-16 sm:px-6 lg:px-8 lg:py-20">
       <div className="mx-auto w-full max-w-6xl">
         
         {/* Header */}
@@ -76,9 +76,8 @@ function ChooseSection() {
           <p className="mt-8 max-w-2xl text-base leading-relaxed text-[#68758a] sm:text-lg">
             Queremos verte bien
           </p>
-
-          <div className="mt-5 h-1 w-24 rounded-full bg-[#a80b29]" />
         </div>
+        <div className="mt-5 h-1 w-24 rounded-full bg-[#a80b29]"/>
 
         {/* Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
