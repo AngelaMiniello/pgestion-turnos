@@ -60,7 +60,7 @@ const features = [
 
 function ChooseSection() {
   return (
-    <section className="bg-white w-full px-5 py-20 sm:px-6 lg:px-8 lg:py-24">
+    <section className="flex w-full justify-center bg-[#f7faff] px-5 py-20 sm:px-6 lg:px-8 lg:py-24">
       <div className="mx-auto w-full max-w-6xl">
         
         {/* Header */}
