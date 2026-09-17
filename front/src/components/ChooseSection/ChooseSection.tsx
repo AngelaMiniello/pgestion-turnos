@@ -61,15 +61,15 @@ const features = [
 function ChooseSection() {
   return (
     <section className="flex w-full justify-center bg-white px-5 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <div className="mx-auto w-full max-w-6xl">
+      <div className="mx-auto w-full max-w-6xl gap-4">
         
         {/* Header */}
-        <div className="text-center mb-20 flex flex-col items-center gap-4">
+        <div className="text-center flex flex-col items-center gap-3">
           <span className="mb-10 rounded-full bg-[#e8f2ff] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
             Nuestra propuesta 
           </span>
 
-          <h2 className="m-0 text-3xl font-bold leading-tight tracking-tight text-[#073b7a] sm:text-5xl">
+          <h2 className="mt-3 text-4xl font-bold tracking-tight text-[#1b2a57] md:text-5xl sm:text-5xl">
             ¿Por qué elegirnos?
           </h2>
 
