@@ -1,51 +1,56 @@
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { useState } from "react"; 
+import { Link } from "react-router-dom"; 
+import { ChevronDown } from "lucide-react"; 
+import styles from "./ServicesMenu.module.css";
 
-function ServicesMenu() {
+interface ServicesMenuProps { 
+  closeMenu?: () => void; 
+}
+
+function ServicesMenu({ closeMenu }: ServicesMenuProps) {
   const [open, setOpen] = useState(false);
 
+  const handleToggle = () => { 
+    setOpen((prev) => !prev); 
+  }; 
+  
+  const handleNavigation = () => { 
+    setOpen(false); 
+    closeMenu?.(); 
+  };
+
   return (
-    <li
-      className="relative flex flex-col md:flex-row md:items-center items-start"
-      onMouseEnter={() => window.innerWidth >= 768 && setOpen(true)}
-      onMouseLeave={() => window.innerWidth >= 768 && setOpen(false)}
+    <div 
+      className={styles.services} 
+      onMouseEnter={() => setOpen(true)} 
+      onMouseLeave={() => setOpen(false)} 
     >
-      <div   
-        onClick={() => setOpen(!open)}
- className="flex items-center gap-1 w-full md:w-auto
-  text-[17px] lg:text-[0.9rem] xl:text-[17px]
-  text-gray-50 hover:text-[#f891cb]"
+
+      <button 
+        type="button" 
+        className={styles.servicesButton} 
+        onClick={handleToggle} 
+        aria-expanded={open} 
       >
         Servicios
-        <ChevronDown className="w-[18px] h-[18px] lg:w-4 lg:h-4 xl:w-[18px] xl:h-[18px]" />
-      </div>
+
+        <ChevronDown 
+          size={17} 
+          className={`${styles.chevron} ${ open ? styles.chevronOpen : "" }`} 
+        />
+
+      </button>
 
       {/* Dropdown */}
       {open && (
-        <div
-  className={`
-    ${open ? "block" : "hidden"}
-
-   relative w-full ml-2 mt-2
-
-    md:absolute md:left-0 md:top-full md:mt-3 md:w-52
-
-    bg-[#004aad] py-2 md:py-3
-  `}
->
-          <a href="/specialties" className="block py-2 text-gray-50 text-sm md:px-4 md:py-3 md:text-base">
-            Especialidades
-          </a>
-           <a href="/studies" className="block py-2 text-gray-50 text-sm md:px-4 md:py-3 md:text-base">
-            Estudios y Prácticas
-          </a>
-           <a href="/coberturas" className="block py-2 text-gray-50 text-sm md:px-4 md:py-3 md:text-base">
-            Coberturas Médicas
-          </a>
+        <div className={styles.dropdown}>
+          <Link to="/specialties" className={styles.dropdownLink} onClick={handleNavigation} > Especialidades </Link>
+          <Link to="/studies" className={styles.dropdownLink} onClick={handleNavigation} > Estudios y Prácticas </Link> 
+          <Link to="/coberturas" className={styles.dropdownLink} onClick={handleNavigation} > Coberturas Médicas </Link> 
         </div>
-      )}
-    </li>
-  );
-}
+       )}
+    </div> 
+  ); 
+} 
 
 export default ServicesMenu;

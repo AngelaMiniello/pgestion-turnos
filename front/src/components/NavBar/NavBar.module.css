@@ -1,155 +1,320 @@
 .header {
-  background-image: url("/assets/img/navBackground.png");
-  background-size: contain;
-  height: 200px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   position: relative;
-  padding: 0 20px;
+  z-index: 1000;
+  width: 100%;
+  min-height: 92px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 74, 173, 0.97),
+      rgba(0, 74, 173, 0.92)
+    ),
+    url("/assets/img/navBackground.png");
+
+  background-size: cover;
+  background-position: center;
+
+  box-shadow: 0 4px 20px rgba(0, 35, 90, 0.12);
+}
+
+.headerInner {
+  width: 100%;
+  max-width: 1440px;
+  min-height: 92px;
+  margin: 0 auto;
+  padding: 0 5%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .logo {
-  height: 100px;
-  max-width: 500px;
+  display: block;
+  width: auto;
+  height: 70px;
+  max-width: 280px;
+  object-fit: contain;
+
+  transition: transform 0.25s ease;
 }
+
+.logo:hover {
+  transform: scale(1.02);
+}
+
+/* -------------------------
+   NAVEGACIÓN
+------------------------- */
 
 .nav {
   display: flex;
-  gap: 1.5rem;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 500;
-  list-style: none;
-  justify-content: end;
   align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
 
-.nav a {
+.navLink {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  padding: 10px 14px;
+
+  color: #ffffff;
   text-decoration: none;
-  color: aliceblue;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  border-radius: 10px;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
-.nav a:hover {
-  color: #f891cb;
+.navLink:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.12);
 }
+
+/* -------------------------
+   PORTAL
+------------------------- */
+
+.portalButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: 8px;
+  padding: 11px 20px;
+
+  color: #ffffff;
+  background: #a80b29;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  box-shadow: 0 6px 15px rgba(90, 0, 20, 0.18);
+
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.portalButton:hover {
+  color: #ffffff;
+  background: #920923;
+  transform: translateY(-2px);
+  box-shadow: 0 9px 20px rgba(90, 0, 20, 0.25);
+}
+
+/* -------------------------
+   LOGOUT
+------------------------- */
 
 .logoutButton {
-  background-color: #a80b29;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  margin-left: 8px;
+  padding: 10px 16px;
+
+  color: #ffffff;
+  background: rgba(168, 11, 41, 0.95);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+
   cursor: pointer;
-  font-size: 1rem;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease;
 }
 
-i {
-  height: 30px;
-  width: 30px;
-  cursor: pointer;
-  color: aliceblue;
-} 
+.logoutButton:hover {
+  background: #920923;
+  transform: translateY(-2px);
+}
 
-/* BOTÓN HAMBURGUESA (oculto en desktop) */
+/* -------------------------
+   HAMBURGUESA
+------------------------- */
+
 .menuButton {
   display: none;
-  font-size: 1.8rem;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  margin-right: 20px;
-}
 
-/* ===== MOBILE ===== */
-@media (max-width: 768px) {
-  .header {
-  background-image: url("/assets/img/navBackground.png");
-  background-size: contain;
-  height: 80px;
-  display: flex;
-  justify-content: flex-start;
+  width: 44px;
+  height: 44px;
+
   align-items: center;
+  justify-content: center;
+
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s ease;
 }
 
-  /* mostrar botón */
-  .menuButton {
-    display: block;
-    font-size: 1rem;
-    align-items: end;
-    margin: 0%;
-    margin-left: auto;
-    margin-right: 10px;
-  }
-
-  /* menu cerrado */
-  .navClosed {
-    display: none;
-  }
-
-  /* menu abierto */
-  .navOpen {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 60%;
-    align-items: flex-start; 
-
-    background-color: #004aad;
-    backdrop-filter: blur(4px);
-
-    padding: 20px;
-    gap: 1.3rem;
-    z-index: 999;
-    border-radius: 0 0 8px 8px;
-  }
-
-    .navOpen li {
-    width: 100%; /* 👈 estabiliza todo */
-    font-size: 0.9rem;
-  }
-
-  .navOpen a {
-  display: block;
-  width: 100%;
+.menuButton:hover {
+  background: rgba(255, 255, 255, 0.18);
 }
 
-  /* achicar logo */
-  .logo {
-    height: 50px;
-  }
+.menuButton:active {
+  transform: scale(0.95);
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
-  .header {
-    padding: 0 20px;
-    height: 120px;
+/* -------------------------
+   TABLET
+------------------------- */
+
+@media (max-width: 1024px) {
+  .header,
+  .headerInner {
+    min-height: 82px;
+  }
+
+  .headerInner {
+    padding: 0 4%;
   }
 
   .logo {
-    height: 70px;
+    height: 62px;
+    max-width: 240px;
   }
 
   .nav {
-    gap: 1rem;
-    font-size: 2rem;
+    gap: 3px;
   }
 
-  .nav li {
-    display: flex;
-    align-items: center;
+  .navLink {
+    padding: 9px 10px;
+    font-size: 14px;
   }
 
-  .nav a {
-    padding: 8px 12px;
-    font-size: 0.9rem;
+  .portalButton {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+/* -------------------------
+   MOBILE
+------------------------- */
+
+@media (max-width: 768px) {
+  .header,
+  .headerInner {
+    min-height: 76px;
   }
 
-  /* botón hamburguesa NO se usa en tablet */
+  .headerInner {
+    padding: 0 18px;
+  }
+
+  .logo {
+    height: 52px;
+    max-width: 210px;
+  }
+
   .menuButton {
+    display: flex;
+  }
+
+  .nav {
+    position: absolute;
+    top: 100%;
+    right: 0;
+
+    width: min(320px, 88vw);
+
     display: none;
+    flex-direction: column;
+    align-items: stretch;
+
+    padding: 14px;
+
+    background: rgba(0, 74, 173, 0.98);
+    backdrop-filter: blur(12px);
+
+    border-radius: 0 0 0 18px;
+
+    box-shadow: -8px 12px 30px rgba(0, 30, 80, 0.2);
+
+    animation: menuOpen 0.2s ease;
+  }
+
+  .navOpen {
+    display: flex;
+  }
+
+  .navLink {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 13px 14px;
+
+    font-size: 15px;
+  }
+
+  .portalButton {
+    width: 100%;
+    box-sizing: border-box;
+
+    margin: 6px 0 0;
+
+    padding: 13px;
+  }
+
+  .logoutButton {
+    width: 100%;
+    margin: 4px 0 0;
+
+    padding: 13px;
+  }
+}
+
+/* -------------------------
+   ANIMACIÓN
+------------------------- */
+
+@keyframes menuOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

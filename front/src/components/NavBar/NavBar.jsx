@@ -1,101 +1,147 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Menu, X } from "lucide-react";
 import styles from "./NavBar.module.css";
-import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import ServicesMenu from "./ServicesMenu";
 
 function NavBar() {
-  const [ user, setUser ] = useState(null);
-  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const navigate = useNavigate();
   const menuRef = useRef(null);
 
   useEffect(() => {
     const getUser = () => {
-    setUser(JSON.parse(localStorage.getItem("user")));
+      const storedUser = localStorage.getItem("user");
+
+      try {
+        setUser(storedUser ? JSON.parse(storedUser) : null);
+      } catch {
+        setUser(null);
+      }
     };
+
     getUser();
 
     window.addEventListener("userChange", getUser);
+
+    return () => {
+      window.removeEventListener("userChange", getUser);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
+    setIsOpen(false);
     navigate("/");
   };
-  
-  useEffect(() => {
-  function handleClickOutside(event) {
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setIsOpen(false);
-    }
-  }
 
-  document.addEventListener("mousedown", handleClickOutside);
-
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
+  const handleNavigation = () => {
+    setIsOpen(false);
   };
-}, []);
 
   return (
     <header className={styles.header}>
-      <Link to="/">
-        <img
-          src="/assets/img/logo.png"
-          alt="Logo"
-          className={styles.logo}
-        />
-      </Link>
+      <div className={styles.headerInner}>
+        <Link
+          to="/"
+          className={styles.logoLink}
+          onClick={handleNavigation}
+        >
+          <img
+            src="/assets/img/logo.png"
+            alt="Clínica"
+            className={styles.logo}
+          />
+        </Link>
 
-      <button
-        className={styles.menuButton}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        ☰
-      </button>
+        <button
+          className={styles.menuButton}
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={isOpen}
+        >
+          {isOpen ? <X size={25} /> : <Menu size={25} />}
+        </button>
 
-      <nav>
-        <ul ref={menuRef}
+        <nav
+          ref={menuRef}
           className={`${styles.nav} ${
-    isOpen ? styles.navOpen : styles.navClosed
-  }`}
->
-          <li className="cursor-pointer text-[17px] text-gray-50 hover:text-[#f891cb] font-sans"><Link to="/">Inicio</Link></li>
-          {user ?  (
-            <>
-              <li>
-                <Link to="/appointments">Mis turnos</Link>
-              </li>
-              <li>
-                <Link to="/profile">Mi perfil</Link>
-              </li>
-              <li>
-                <button onClick={handleLogout} className={styles.logoutButton}>Cerrar Sesión</button>
-              </li>
-            </> ) : ( 
-            <>
-              <ServicesMenu/>
-            <li>
-            <Link
-              to="/portal"
-              className="
-  block w-full text-center
-  rounded-md bg-[#a80b29] 
-  px-4 py-2 text-sm
-  md:px-6 md:py-3 md:text-base
-  text-white font-medium shadow-sm transition
-"
-            >
-              Portal de turnos
-            </Link>
-            </li>
-            </>)}
-        </ul>
-      </nav>
+            isOpen ? styles.navOpen : ""
+          }`}
+        >
+          <Link
+            to="/"
+            className={styles.navLink}
+            onClick={handleNavigation}
+          >
+            Inicio
+          </Link>
 
-     
+          {user ? (
+            <>
+              <Link
+                to="/appointments"
+                className={styles.navLink}
+                onClick={handleNavigation}
+              >
+                Mis turnos
+              </Link>
+
+              <Link
+                to="/profile"
+                className={styles.navLink}
+                onClick={handleNavigation}
+              >
+                Mi perfil
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                className={styles.logoutButton}
+              >
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <>
+              <ServicesMenu
+                closeMenu={() => setIsOpen(false)}
+              />
+
+              <Link
+                to="/portal"
+                className={styles.portalButton}
+                onClick={handleNavigation}
+              >
+                Portal de turnos
+              </Link>
+            </>
+          )}
+        </nav>
+      </div>
     </header>
   );
 }

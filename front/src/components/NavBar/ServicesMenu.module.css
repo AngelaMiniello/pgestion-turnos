@@ -1,0 +1,109 @@
+.services { 
+    position: relative; 
+} 
+
+.servicesButton { 
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+    padding: 10px 14px; 
+    color: #ffffff; 
+    background: transparent; 
+    border: none; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    font-family: inherit; 
+    font-size: 15px; 
+    font-weight: 600; 
+    transition: background-color 0.25s ease, color 0.25s ease; 
+} 
+
+.servicesButton:hover { 
+    background: rgba(255, 255, 255, 0.12); 
+} 
+
+.chevron { 
+    transition: transform 0.25s ease; 
+} 
+
+.chevronOpen { 
+    transform: rotate(180deg); 
+} 
+
+/* ------------------------- DROPDOWN ------------------------- */ 
+.dropdown { 
+    position: absolute; 
+    top: calc(100% + 10px); 
+    left: 0; 
+    width: 230px;
+    padding: 8px; 
+    background: #ffffff; 
+    border: 1px solid #e6edf7; 
+    border-radius: 14px; 
+    box-shadow: 0 15px 35px rgba(0, 40, 100, 0.18); 
+    animation: dropdownOpen 0.2s ease; 
+} 
+
+.dropdownLink { 
+    display: block; 
+    padding: 12px 14px; 
+    color: #40516a; 
+    text-decoration: none; 
+    border-radius: 9px; 
+    font-family: "Inter", "Segoe UI", Arial, sans-serif; 
+    font-size: 14px; 
+    font-weight: 600; 
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease; 
+} 
+
+.dropdownLink:hover { 
+    color: #004aad; 
+    background: #edf5ff; 
+    transform: translateX(2px); 
+} 
+
+@keyframes dropdownOpen { 
+    from { 
+        opacity: 0; 
+        transform: translateY(-6px); 
+    } to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    } 
+} 
+
+/* ------------------------- MOBILE ------------------------- */ 
+@media (max-width: 768px) { 
+    .services { 
+        width: 100%; 
+    } 
+    
+    .servicesButton { 
+        width: 100%; 
+        justify-content: space-between; 
+        padding: 13px 14px; 
+    } 
+    
+    .dropdown { 
+        position: static; 
+        width: 100%; 
+        box-sizing: border-box; 
+        margin-top: 4px; 
+        padding: 5px; 
+        background: rgba(255, 255, 255, 0.08); 
+        border: none; 
+        border-radius: 10px; 
+        box-shadow: none; 
+    } 
+    
+    .dropdownLink { 
+        padding: 11px 14px; 
+        color: #ffffff; 
+        font-size: 14px; 
+    } 
+    
+    .dropdownLink:hover { 
+        color: #ffffff; 
+        background: rgba(255, 255, 255, 0.1); 
+    } 
+}
