@@ -65,7 +65,7 @@ function ChooseSection() {
         
         {/* Header */}
         <div className="text-center mb-20 flex flex-col items-center">
-          <span className="mb-8 rounded-full bg-[#e8f2ff] px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
+          <span className="mb-10 rounded-full bg-[#e8f2ff] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
             Nuestra propuesta 
           </span>
 
@@ -77,7 +77,7 @@ function ChooseSection() {
             Queremos verte bien
           </p>
         </div>
-        <div className="mt-5 h-1 w-24 rounded-full bg-[#a80b29]"/>
+        <div className="mt-8 mb-16 h-1 w-24 rounded-full bg-[#a80b29]"/>
 
         {/* Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
