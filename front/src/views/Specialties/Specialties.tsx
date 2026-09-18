@@ -307,7 +307,7 @@ function Specialties() {
               key={item.id} 
               className={` overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${ 
                 isOpen ? "border-[#cfe0f7] shadow-[0_12px_35px_rgba(0,55,120,0.10)]" 
-                : "border-[#e5eaf1] shadow-[0_4px_15px_rgba(0,55,120,0.04)] hover:border-[#d3e2f5] hover:shadow-[0_8px_25px_rgba(0,55,120,0.08)]" 
+                : "border-[#e5eaf1] shadow-[0_4px_15px_rgba(0,55,120,0.04)]" 
               } `} 
             > 
               
@@ -316,7 +316,15 @@ function Specialties() {
                 type="button" 
                 onClick={() => toggle(item.id)} 
                 aria-expanded={isOpen} 
-                className="flex w-full items-center justify-between gap-4 rounded-2xl px-5 py-5 text-left transition-colors duration-200 hover:bg-[#f8fbff] focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#004aad]/25 sm:px-7"
+                className="flex w-full 
+                items-center justify-between 
+                gap-4 rounded-2xl 
+                px-5 py-5 
+                border-0 bg-transparent 
+                text-left outline-none 
+                transition-colors duration-200 
+                hover:bg-[#f8fbff] focus:outline-none 
+                focus-visible:outline-none sm:px-7"
               > 
                 
                 <div className="flex min-w-0 items-center gap-4">   
