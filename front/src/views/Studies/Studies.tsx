@@ -126,10 +126,7 @@ function Studies() {
               return (
                 <article 
                   key={item.id} 
-                  className={` overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${ 
-                    isOpen ? "shadow-[0_12px_35px_rgba(0,55,120,0.10)]" 
-                    : "shadow-[0_4px_15px_rgba(0,55,120,0.04)]" 
-                  } `} 
+                  className={` overflow-hidden rounded-2xl border bg-white transition-all duration-300`} 
                 >
                   
                   {/* Botón */}
@@ -147,10 +144,7 @@ function Studies() {
                      hover:bg-[#f8fbff] focus:outline-none 
                       focus-visible:outline-none sm:px-7"
                   >
-                    <ChevronRight
-                      size={19} 
-                      className={`transition-transform duration-300 ${ isOpen ? "rotate-180" : "" }`} 
-                    />
+                    
                     <span 
                       className={` text-base font-semibold transition-colors duration-200 sm:text-lg ${ 
                         isOpen ? "text-[#004aad]" 
@@ -159,6 +153,11 @@ function Studies() {
                     >
                       {item.name}
                     </span>
+
+                    <ChevronRight
+                      size={19} 
+                      className={`transition-transform duration-300 ${ isOpen ? "rotate-90" : "" }`} 
+                    />
                   </button>
   
                   {isOpen && (

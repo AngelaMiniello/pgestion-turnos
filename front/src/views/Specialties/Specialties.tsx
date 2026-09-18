@@ -305,10 +305,7 @@ function Specialties() {
           return ( 
             <article 
               key={item.id} 
-              className={` overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${ 
-                isOpen ? "shadow-[0_12px_35px_rgba(0,55,120,0.10)]" 
-                : "shadow-[0_4px_15px_rgba(0,55,120,0.04)]" 
-              } `} 
+              className={` overflow-hidden rounded-2xl border bg-white transition-all duration-300`} 
             > 
               
               {/* Botón */} 
@@ -360,8 +357,8 @@ function Specialties() {
                 
                 {/* Contenido */} 
                 {isOpen && ( 
-                  <div className="border-t border-[#edf1f6] bg-[#fbfdff] px-5 pb-7 pt-6 sm:px-7 gap-4"> 
-                    <div className="space-y-8"> 
+                  <div className="border-t border-[#edf1f6] bg-[#fbfdff] px-5 pb-7 pt-6 sm:px-7"> 
+                    <div className="space-y-8 gap-4"> 
                       {item.sections.map((section, index) => ( 
                         <div key={index} className="space-y-4"> 
               
@@ -379,7 +376,7 @@ function Specialties() {
                         
                             {/* Estudios */} 
                             {section.studies.length > 0 && ( 
-                              <div> 
+                              <div className=""> 
                                 <p className="mb-4 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
                                   Prácticas y estudios 
                                 </p> 

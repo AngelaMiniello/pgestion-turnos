@@ -98,7 +98,7 @@ export default function Coberturas() {
           {Object.keys(grouped)
             .sort()
             .map((letter) => (
-              <div key={letter} className="">
+              <div key={letter} className="gap-2">
                 
                 {/* LETRA */}
                 <h3 className="text-xl font-semibold text-[#1f4fbf] pb-2 pt-2">
