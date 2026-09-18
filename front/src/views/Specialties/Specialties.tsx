@@ -291,7 +291,7 @@ function Specialties() {
             Especialidades Médicas 
           </h2> 
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#68758a] sm:text-lg"> 
-            Contamos con profesionales especializados para acompañarte en cada etapa de tu cuidado. 
+            Contamos con profesionales especializados <br/> para acompañarte en cada etapa de tu cuidado. 
           </p> 
         </div> 
         
@@ -306,8 +306,8 @@ function Specialties() {
             <article 
               key={item.id} 
               className={` overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${ 
-                isOpen ? "border-[#cfe0f7] shadow-[0_12px_35px_rgba(0,55,120,0.10)]" 
-                : "border-[#e5eaf1] shadow-[0_4px_15px_rgba(0,55,120,0.04)]" 
+                isOpen ? "shadow-[0_12px_35px_rgba(0,55,120,0.10)]" 
+                : "shadow-[0_4px_15px_rgba(0,55,120,0.04)]" 
               } `} 
             > 
               
@@ -332,16 +332,19 @@ function Specialties() {
                   <div className={` flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300 ${ 
                   isOpen ? "bg-[#004aad] text-white" 
                   : "bg-[#e8f2ff] text-[#004aad]"
-                } `} > 
+                  } `} 
+                  > 
                   <Stethoscope size={20} strokeWidth={2} /> 
                   </div> 
                 
                   {/* Nombre */} 
-                  <span className={` text-base font-semibold transition-colors duration-200 sm:text-lg ${ 
-                  isOpen ? "text-[#004aad]" 
-                  : "text-[#1f3557]" 
-                } `} > 
-                  {item.name} 
+                  <span 
+                    className={` text-base font-semibold transition-colors duration-200 sm:text-lg ${ 
+                      isOpen ? "text-[#004aad]" 
+                      : "text-[#1f3557]" 
+                    } `} 
+                  > 
+                    {item.name} 
                   </span> 
                 </div> 
                 
@@ -349,14 +352,15 @@ function Specialties() {
                 <div className={` flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${ 
                   isOpen ? "bg-[#e8f2ff] text-[#004aad]" 
                   : "bg-[#f5f7fa] text-[#68758a]" 
-                } `} > 
+                  } `} 
+                > 
                   <ChevronDown size={19} className={`transition-transform duration-300 ${ isOpen ? "rotate-180" : "" }`} /> 
                 </div> 
               </button> 
                 
                 {/* Contenido */} 
                 {isOpen && ( 
-                  <div className="border-t border-[#edf1f6] bg-[#fbfdff] px-5 pb-7 pt-6 sm:px-7"> 
+                  <div className="border-t border-[#edf1f6] bg-[#fbfdff] px-5 pb-7 pt-6 sm:px-7 gap-4"> 
                     <div className="space-y-8"> 
                       {item.sections.map((section, index) => ( 
                         <div key={index} className="space-y-4"> 
@@ -364,31 +368,32 @@ function Specialties() {
                           {/* Título de sección */} 
                           {section.title && ( 
                             <h3 className="text-lg font-bold text-[#073b7a] sm:text-xl"> 
-                          {section.title}
-                            </h3> )} 
+                              {section.title}
+                            </h3> 
+                          )} 
                         
                             {/* Descripción */} 
                             <p className="text-sm leading-7 text-[#68758a] sm:text-base"> 
-                          {section.description} 
+                              {section.description} 
                             </p> 
                         
                             {/* Estudios */} 
                             {section.studies.length > 0 && ( 
-                          <div> 
-                            <p className="mb-4 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
-                              Prácticas y estudios 
-                            </p> 
-                            <ul className="space-y-3"> 
-                              {section.studies.map((study, i) => ( 
-                                <li key={i} className="flex items-start gap-3 text-sm leading-6 text-[#4b5563] sm:text-[15px]" > 
-                                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#e8f2ff] text-[#004aad]"> 
-                                    <Check size={13} strokeWidth={2.5} /> 
-                                  </span> 
-                                  <span>{study}</span> 
-                                </li> 
-                              ))}
-                            </ul> 
-                          </div> 
+                              <div> 
+                                <p className="mb-4 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
+                                  Prácticas y estudios 
+                                </p> 
+                                <ul className="space-y-3"> 
+                                  {section.studies.map((study, i) => ( 
+                                  <li key={i} className="flex items-start gap-3 text-sm leading-6 text-[#4b5563] sm:text-[15px]" > 
+                                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#e8f2ff] text-[#004aad]"> 
+                                      <Check size={13} strokeWidth={2.5} /> 
+                                    </span> 
+                                    <span>{study}</span> 
+                                  </li> 
+                                  ))}
+                                </ul> 
+                              </div> 
                             )} 
                         </div> 
                       ))} 
