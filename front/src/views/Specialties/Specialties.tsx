@@ -305,7 +305,7 @@ function Specialties() {
           return ( 
             <article 
               key={item.id} 
-              className={` overflow-hidden rounded-2xl bg-white transition-all duration-300`} 
+              className={` overflow-hidden border rounded-2xl bg-white transition-all duration-300`} 
             > 
               
               {/* Botón */} 
@@ -322,7 +322,8 @@ function Specialties() {
                 transition-colors duration-200 
                 hover:bg-[#f8fbff] focus:outline-none 
                 focus-visible:outline-none sm:px-7
-                focus:ring-0 focus:ring-offset-0"
+                focus:ring-0 focus:ring-offset-0
+                focus-visible:ring-0"
               > 
                 
                 <div className="flex min-w-0 items-center gap-4">   
