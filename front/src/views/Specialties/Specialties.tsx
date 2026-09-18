@@ -314,15 +314,15 @@ function Specialties() {
                 onClick={() => toggle(item.id)} 
                 aria-expanded={isOpen} 
                 className="flex w-full 
-  items-center justify-between 
-  gap-4 rounded-2xl 
-  px-5 py-5 
-  border-0 bg-transparent 
-  text-left 
-  transition-colors duration-200 
-  hover:bg-[#c1d4ee] 
-  outline-none focus:outline-none focus:ring-0 focus-visible:ring-0
-  sm:px-7"
+                  items-center justify-between 
+                  gap-4 rounded-2xl 
+                  px-5 py-5 
+                  border-0 bg-transparent 
+                  text-left 
+                  transition-colors duration-200 
+                  hover:bg-[#c1d4ee] 
+                  outline-none focus:outline-none focus:ring-0 focus-visible:ring-0
+                  sm:px-7"
               > 
                 
                 <div className="flex min-w-0 items-center gap-2">   

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, SquareArrowDownRightIcon } from "lucide-react";
 import styles from "./NavBar.module.css";
 import ServicesMenu from "./ServicesMenu";
 
@@ -102,27 +102,21 @@ function NavBar() {
 
           {user ? (
             <>
-              <Link
-                to="/appointments"
-                className={styles.navLink}
-                onClick={handleNavigation}
-              >
-                Mis turnos
-              </Link>
-
-              <Link
-                to="/profile"
-                className={styles.navLink}
-                onClick={handleNavigation}
-              >
-                Mi perfil
-              </Link>
+              <UserMenu
+                closeMenu={() => setIsOpen(false)}
+                onLogout={handleLogout}
+              />
 
               <button
+                type="button"
                 onClick={handleLogout}
                 className={styles.logoutButton}
+                title="Cerrar sesión"
+                aria-label="Cerrar sesión"
               >
-                Cerrar sesión
+                <SquareArrowDownRightIcon 
+                  size={18} strokeWidth={2} 
+                />
               </button>
             </>
           ) : (
