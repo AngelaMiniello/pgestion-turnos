@@ -119,7 +119,7 @@ function Studies() {
           <div className="mx-auto mt-6 h-1 w-24 rounded-full bg-[#a80b29]" /> 
 
           {/* Lista */}
-          <div className="mx-auto mt-10 w-full max-w-5xl space-y-3">
+          <div className="mx-auto mt-10 w-full max-w-5xl flex flex-col gap-2">
             {studies.map((item) => {
               const isOpen = openId === item.id;
   
@@ -161,23 +161,18 @@ function Studies() {
                   </button>
   
                   {isOpen && (
-                    <div className="border-t border-[#edf1f6] bg-[#fbfdff] px-5 pb-7 pt-6 sm:px-7 gap-4">
-                      <div className="space-y-8"> 
+                    <div className="border-t border-[#edf1f6] bg-[#fbfdff] px-5 pb-7 pt-4 sm:px-7 gap-4">
+                      <div className="flex flex-col gap-2"> 
                         {item.sections.map((section, index) => (
                           <div key={index} className="space-y-4">
   
-                            {/* Título */}
-                            <h3 className="text-lg font-bold text-[#073b7a] sm:text-xl">
-                              {item.name}
-                            </h3>
-  
                             {/* Lista */}
-                            <ul className="space-y-2 pt-2 md:pt-3">
-                            {section.practices.map((study, i) => (
-                              <li key={i} className="flex gap-2 text-sm">
-                                <Check className="w-4 h-4 mt-0.5"/> {study}
-                              </li>
-                            ))}
+                            <ul className="flex flex-col gap-2 p-4">
+                              {section.practices.map((study, i) => (
+                                <li key={i} className="flex gap-2 text-sm">
+                                  <Check className="w-4 h-4 mt-0.5"/> {study}
+                                </li>
+                              ))}
                             </ul>
                        
                             {/* Lista */}

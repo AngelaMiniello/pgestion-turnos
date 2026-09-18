@@ -299,7 +299,7 @@ function Specialties() {
         <div className="mx-auto mt-6 h-1 w-24 rounded-full bg-[#a80b29]" /> 
         
         {/* Especialidades */} 
-        <div className="mx-auto mt-10 w-full max-w-5xl space-y-3"> 
+        <div className="mx-auto mt-10 w-full max-w-5xl flex flex-col gap-2"> 
           {specialties.map((item) => { const isOpen = openId === item.id; 
           
           return ( 
@@ -320,12 +320,12 @@ function Specialties() {
   border-0 bg-transparent 
   text-left 
   transition-colors duration-200 
-  hover:bg-[#f8fbff] 
+  hover:bg-[#c1d4ee] 
   outline-none focus:outline-none focus:ring-0 focus-visible:ring-0
   sm:px-7"
               > 
                 
-                <div className="flex min-w-0 items-center gap-4">   
+                <div className="flex min-w-0 items-center gap-2">   
                   {/* Icono */} 
                   <div className={` flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300 ${ 
                   isOpen ? "bg-[#004aad] text-white" 
@@ -359,7 +359,7 @@ function Specialties() {
                 {/* Contenido */} 
                 {isOpen && ( 
                   <div className="border-t border-[#edf1f6] bg-[#fbfdff] px-5 pb-7 pt-6 sm:px-7"> 
-                    <div className="space-y-8 gap-4"> 
+                    <div className="space-y-6 flex flex-col gap-2"> 
                       {item.sections.map((section, index) => ( 
                         <div key={index} className="space-y-4"> 
               
@@ -377,11 +377,11 @@ function Specialties() {
                         
                             {/* Estudios */} 
                             {section.studies.length > 0 && ( 
-                              <div className=""> 
+                              <div className="pt-4"> 
                                 <p className="mb-4 text-xs font-bold uppercase tracking-wider text-[#004aad]"> 
                                   Prácticas y estudios 
                                 </p> 
-                                <ul className="space-y-3"> 
+                                <ul className="space-y-3 pt-4"> 
                                   {section.studies.map((study, i) => ( 
                                   <li key={i} className="flex items-start gap-3 text-sm leading-6 text-[#4b5563] sm:text-[15px]" > 
                                     <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#e8f2ff] text-[#004aad]"> 
