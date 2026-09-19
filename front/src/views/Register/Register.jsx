@@ -39,6 +39,8 @@ function Register() {
     // VITE_API_URL
     const API_URL = import.meta.env.VITE_API_URL;
 
+    console.log("URL USADA:", import.meta.env.VITE_API_URL);
+    
     try {
       // 1. Creo las credenciales
       const credResponse = await axios.post(`${API_URL}/credentials`, {
