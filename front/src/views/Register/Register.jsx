@@ -28,53 +28,56 @@ function Register() {
   };
 
   const handleSubmit = async (event) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  const errorsList = validateRegister(form);
-  if (Object.keys(errorsList).length > 0) {
-    setErrors(errorsList);
-    return alert("Hay errores en el formulario");
-  }
+    const errorsList = validateRegister(form);
+    if (Object.keys(errorsList).length > 0) {
+      setErrors(errorsList);
+      return alert("Hay errores en el formulario");
+    }
 
-  console.log("Mi URL de Backend es:", import.meta.env.VITE_API_URL);
+    // VITE_API_URL
+    const API_URL = import.meta.env.VITE_API_URL;
 
-  try {
-    // 1. Creo las credenciales
-    const credResponse = await axios.post(`${import.meta.env.VITE_API_URL}/credentials`, {
-      username: form.username,
-      password: form.password,
-    });
-
-    const credentialId = credResponse.data.credentialId;
-
-    // 2. Creo el usuario vinculando la credencial y mandando TODOS los campos
-    const userResponse = await axios.post(
-      `${import.meta.env.VITE_API_URL}/users/register`,
-      {
-        name: form.name,
-        username: form.name,
+    try {
+      // 1. Creo las credenciales
+      const credResponse = await axios.post(`${API_URL}/credentials`, {
+        username: form.username,
         password: form.password,
-        email: form.email,
-        birthdate: form.birthdate,
-        nDni: form.nDni,
-        active: true,
-        credentialsId: credentialId,
-      }
-    );
+      });
 
-    console.log("USUARIO REGISTRADO:", userResponse.data);
-    console.log("CREDENCIALES CREADAS:", credResponse.data);
+      const credentialId = credResponse.data.id;
 
-    alert("¡Usuario registrado con éxito!");
+      // 2. Creo el usuario vinculando la credencial y mandando los datos correctos
+      const userResponse = await axios.post(
+        `${API_URL}/users/register`,
+        {
+          name: form.name,
+          username: form.username,
+          password: form.password,
+          email: form.email,
+          birthdate: form.birthdate,
+          nDni: form.nDni,
+          active: true,
+          credentialsId: credentialId,
+        }
+      );
 
-    setForm(initialState);
-    setErrors({});
+      console.log("USUARIO REGISTRADO:", userResponse.data);
+      console.log("CREDENCIALES CREADAS:", credResponse.data);
 
-  } catch (error) {
-    console.error("ERROR REGISTRO:", error);
-    alert("Error al registrar usuario");
-  }
-};
+      alert("¡Usuario registrado con éxito!");
+
+      setForm(initialState);
+      setErrors({});
+
+    } catch (error) {
+      console.error("ERROR REGISTRO:", error);
+      // Muestra el mensaje exacto que devuelva el backend si existe
+      const errorMessage = error.response?.data?.message || "Error al registrar usuario";
+      alert(errorMessage);
+    }
+  };
 
   const isFormValid = Object.keys(errors).length === 0 &&
                       Object.values(form).every((f) => f.trim() !== "");
