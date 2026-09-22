@@ -36,21 +36,10 @@ function Register() {
       return alert("Hay errores en el formulario");
     }
 
-    // VITE_API_URL
     const API_URL = import.meta.env.VITE_API_URL;
-
-    console.log("URL USADA:", import.meta.env.VITE_API_URL);
     
     try {
-      // 1. Creo las credenciales
-      const credResponse = await axios.post(`${API_URL}/credentials`, {
-        username: form.username,
-        password: form.password,
-      });
-
-      const credentialId = credResponse.data.id;
-
-      // 2. Creo el usuario vinculando la credencial y mandando los datos correctos
+      // Única petición al backend: el servidor se encarga de crear la credencial y el usuario juntos
       const userResponse = await axios.post(
         `${API_URL}/users/register`,
         {
@@ -59,14 +48,11 @@ function Register() {
           password: form.password,
           email: form.email,
           birthdate: form.birthdate,
-          nDni: form.nDni,
-          active: true,
-          credentialsId: credentialId,
+          nDni: Number(form.nDni), // Nos aseguramos que sea número
         }
       );
 
       console.log("USUARIO REGISTRADO:", userResponse.data);
-      console.log("CREDENCIALES CREADAS:", credResponse.data);
 
       alert("¡Usuario registrado con éxito!");
 
@@ -75,8 +61,7 @@ function Register() {
 
     } catch (error) {
       console.error("ERROR REGISTRO:", error);
-      // Muestra el mensaje exacto que devuelva el backend si existe
-      const errorMessage = error.response?.data?.message || "Error al registrar usuario";
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || "Error al registrar usuario";
       alert(errorMessage);
     }
   };
