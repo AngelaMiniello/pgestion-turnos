@@ -68,7 +68,7 @@ function UserProfile() {
   };
 
   return (
-    <main className="min-h-[calc(100vh-80px)] bg-[#f5f6f8] py-10 px-4 sm:px-6 lg:px-8 box-border flex w-full justify-center">
+    <main className="min-h-[calc(80vh-80px)] bg-[#f5f6f8] py-10 px-4 sm:px-6 lg:px-8 box-border flex w-full justify-center">
       <div className="max-w-4xl mx-auto flex w-full flex-col gap-4">
 
         {/* --- TARJETA DE CABECERA (DASHBOARD BANNER) --- */}
@@ -90,7 +90,7 @@ function UserProfile() {
         </div>
 
         {/* --- SECCIÓN DE DATOS PERSONALES (GRID) --- */}
-        <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100 mb-6">
+        <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100 mb-6 gap-6">
           <h2 className="text-xl font-bold text-[#1b2a57] mb-6 border-b pb-3">
             Información de la Cuenta
           </h2>
