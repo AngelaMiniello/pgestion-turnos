@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Menu, X, SquareArrowDownRightIcon } from "lucide-react";
 import styles from "./NavBar.module.css";
 import ServicesMenu from "./ServicesMenu";
+import UserMenu from "./UserMenu";
 
 function NavBar() {
   const [user, setUser] = useState(null);
