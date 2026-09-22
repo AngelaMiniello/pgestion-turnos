@@ -7,24 +7,24 @@ import bcrypt from "bcrypt";
 import { validateCredentialService } from "./Credentials.Service";
 
 export const createUserService = async (userData: UserDto): Promise<User> => {
-
-  // Armo la instancia de la credencial (sin hacer .save acá)
+  // 1. Creamos la instancia de la credencial (SIN hacer .save)
   const newCredential = CredentialRepository.create({
     username: userData.username,
-    password: userData.password
+    password: userData.password,
   });
 
-  // Creo el usuario con la credencial adentro
+  // 2. Creamos la instancia del usuario asociándole esa credencial
   const newUser = UserRepository.create({
     name: userData.name,
     email: userData.email,
     birthdate: userData.birthdate,
     nDni: userData.nDni,
     active: true,
-    credential: newCredential // Pasamos el objeto sin guardar
+    credential: newCredential, // Pasamos el objeto en memoria
   });
 
-  // Gracias al cascade: true, esto guarda al usuario Y a la credencial de un solo golpe
+  // 3. Guardamos ÚNICAMENTE el usuario. 
+  // (Gracias al { cascade: true } en la entidad User, TypeORM guarda la credencial y el usuario juntos en el mismo golpe).
   return await UserRepository.save(newUser);
 };
 
