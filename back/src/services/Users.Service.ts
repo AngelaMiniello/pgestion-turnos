@@ -7,8 +7,7 @@ import bcrypt from "bcrypt";
 import { validateCredentialService } from "./Credentials.Service";
 
 export const createUserService = async (userData: UserDto): Promise<User> => {
-  console.log("👉 ¡ENTRÓ A CREAR USUARIO UNA VEZ!", userData.username);
-  
+
   // Armo la instancia de la credencial (sin hacer .save acá)
   const newCredential = CredentialRepository.create({
     username: userData.username,
