@@ -41,7 +41,12 @@ export const loginUserService = async (username: string, password: string) => {
       throw new Error("Contraseña incorrecta");
     }
 
-    const user = await User.findOne({ id: credential.userId });
+    const user = await User.findOne({
+      where: {
+          credential: { id: credential.id }
+      },
+      relations: ["credential"]
+    });
     
     if (!user) {
       throw new Error("Usuario no encontrado");
