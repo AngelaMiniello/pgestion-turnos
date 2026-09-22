@@ -35,7 +35,7 @@ function UserMenu({ closeMenu,  onLogout }: UserMenuProps) {
       >
         <User 
           size={17} 
-          className={`${styles.user} ${ open ? styles.userOpen : "" }`} 
+          className={`${styles.user}`} 
         />
 
       </button>

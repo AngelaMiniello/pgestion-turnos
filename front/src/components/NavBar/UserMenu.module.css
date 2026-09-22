@@ -26,10 +26,6 @@
     transition: transform 0.25s ease; 
 } 
 
-.userOpen { 
-    transform: rotate(180deg); 
-} 
-
 /* ------------------------- DROPDOWN ------------------------- */ 
 .dropdown { 
     position: absolute; 

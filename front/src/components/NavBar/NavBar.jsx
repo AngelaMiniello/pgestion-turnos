@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, SquareArrowDownRightIcon } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import styles from "./NavBar.module.css";
 import ServicesMenu from "./ServicesMenu";
 import UserMenu from "./UserMenu";
@@ -115,7 +115,7 @@ function NavBar() {
                 title="Cerrar sesión"
                 aria-label="Cerrar sesión"
               >
-                <SquareArrowDownRightIcon 
+                <LogOut
                   size={18} strokeWidth={2} 
                 />
               </button>
