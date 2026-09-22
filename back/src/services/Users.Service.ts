@@ -6,31 +6,26 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { validateCredentialService } from "./Credentials.Service";
 
-//  Crear usuario con credenciales automáticamente
 export const createUserService = async (userData: UserDto): Promise<User> => {
-  
-  // Crear credenciales
+  // Armo la instancia de la credencial (sin hacer .save acá)
   const newCredential = CredentialRepository.create({
     username: userData.username,
     password: userData.password
   });
 
-  const savedCredential = await CredentialRepository.save(newCredential);
-
-  //  Crear usuario asociado con esa credencial
+  // Creo el usuario con la credencial adentro
   const newUser = UserRepository.create({
     name: userData.name,
     email: userData.email,
     birthdate: userData.birthdate,
     nDni: userData.nDni,
     active: true,
-    credential: savedCredential
+    credential: newCredential // Pasamos el objeto sin guardar
   });
 
-  // Guardar usuario final
+  // Gracias al cascade: true, esto guarda al usuario Y a la credencial de un solo golpe
   return await UserRepository.save(newUser);
 };
-
 
 // Obtener todos los usuarios
 export const getAllUsersService = async (): Promise<User[]> => {
