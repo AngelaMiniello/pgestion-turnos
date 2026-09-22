@@ -68,8 +68,8 @@ function UserProfile() {
   };
 
   return (
-    <main className="min-h-[calc(100vh-80px)] bg-[#f5f6f8] py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <main className="min-h-[calc(100vh-80px)] bg-[#f5f6f8] py-10 px-4 sm:px-6 lg:px-8 box-border flex w-full justify-center">
+      <div className="max-w-4xl mx-auto flex w-full flex-col gap-4">
 
         {/* --- TARJETA DE CABECERA (DASHBOARD BANNER) --- */}
         <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 border border-gray-100">
@@ -90,7 +90,7 @@ function UserProfile() {
         </div>
 
         {/* --- SECCIÓN DE DATOS PERSONALES (GRID) --- */}
-        <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">
+        <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100 mb-6">
           <h2 className="text-xl font-bold text-[#1b2a57] mb-6 border-b pb-3">
             Información de la Cuenta
           </h2>
@@ -99,7 +99,7 @@ function UserProfile() {
             
             {/* Campo Nombre */}
             <div className="bg-[#f5f6f8] p-4 rounded-xl border border-gray-100">
-              <p className="text-xs font-semibold tracking-wide text-gray-400 uppercase mb-1">
+              <p className="text-xs font-semibold tracking-wide text-gray-400 uppercase mb-2">
                 Nombre Completo
               </p>
               <p className="font-semibold text-lg text-[#1b2a57]">
@@ -109,7 +109,7 @@ function UserProfile() {
 
             {/* Campo Usuario */}
             <div className="bg-[#f5f6f8] p-4 rounded-xl border border-gray-100">
-              <p className="text-xs font-semibold tracking-wide text-gray-400 uppercase mb-1">
+              <p className="text-xs font-semibold tracking-wide text-gray-400 uppercase mb-2">
                 Nombre de Usuario
               </p>
               <p className="font-semibold text-lg text-[#1b2a57]">
@@ -119,7 +119,7 @@ function UserProfile() {
 
             {/* Campo DNI */}
             <div className="bg-[#f5f6f8] p-4 rounded-xl border border-gray-100">
-              <p className="text-xs font-semibold tracking-wide text-gray-400 uppercase mb-1">
+              <p className="text-xs font-semibold tracking-wide text-gray-400 uppercase mb-2">
                 DNI
               </p>
               <p className="font-semibold text-lg text-[#1b2a57]">
@@ -129,7 +129,7 @@ function UserProfile() {
 
             {/* Campo Email */}
             <div className="bg-[#f5f6f8] p-4 rounded-xl border border-gray-100">
-              <p className="text-xs font-semibold tracking-wide text-gray-400 uppercase mb-1">
+              <p className="text-xs font-semibold tracking-wide text-gray-400 uppercase mb-2">
                 Correo Electrónico
               </p>
               <p className="font-semibold text-lg text-[#1b2a57] truncate">
