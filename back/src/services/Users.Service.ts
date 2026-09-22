@@ -4,6 +4,7 @@ import UserRepository from "../repositories/UserRepository";
 import CredentialRepository from "../repositories/CredentialsRepository";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { validateCredentialService } from "./Credentials.Service";
 
 //  Crear usuario con credenciales automáticamente
 export const createUserService = async (userData: UserDto): Promise<User> => {
@@ -55,8 +56,6 @@ export const deleteUserService = async (id: number): Promise<void> => {
 
 
 // Login
-import { validateCredentialService } from "./Credentials.Service";
-
 export const loginUserService = async (username: string, password: string): Promise<{ user: User; token: string }> => {
   // Validar credenciales
   const credentialId = await validateCredentialService(username, password);

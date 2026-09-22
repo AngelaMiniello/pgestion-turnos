@@ -43,9 +43,8 @@ export const loginUserService = async (username: string, password: string) => {
 
     const user = await User.findOne({
       where: {
-          credential: { id: credential.id }
-      },
-      relations: ["credential"]
+        credential: { id: credential.id }
+      }
     });
     
     if (!user) {
