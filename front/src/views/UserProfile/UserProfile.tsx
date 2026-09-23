@@ -105,7 +105,7 @@ function UserProfile() {
         </Link>
         
         <Link
-          to="/appointments/schedule"
+          to="/appointments"
           className="px-4 py-2.5 bg-[#1b2a57] text-white text-sm font-semibold rounded-xl text-center hover:bg-[#152144] transition shadow-sm flex items-center justify-center gap-2"
         >
           <PlusIcon size={17} className="text-white" /> 

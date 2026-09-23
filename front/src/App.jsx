@@ -10,6 +10,8 @@ import Studies from "./views/Studies/Studies";
 import Footer from "./components/Footer/Footer";
 import Coberturas from "./views/Coberturas/Coberturas";
 import UserProfile from "./views/UserProfile/UserProfile";
+import ScheduleAppointment from "./views/ScheduleAppointment/ScheduleAppointment";
+
 function App() {
 
   return (
@@ -26,6 +28,7 @@ function App() {
         <Route path="/studies" element={<Studies/>}/>
         <Route path="/coberturas" element={<Coberturas/>}/>
         <Route path="/profile" element={<UserProfile/>}/>
+        <Route path="/appointments/schedule" element={<ScheduleAppointment />} />
       </Routes>
 
       <Footer/>
