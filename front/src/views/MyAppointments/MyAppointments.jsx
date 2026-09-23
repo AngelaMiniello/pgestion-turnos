@@ -46,10 +46,11 @@ function MyAppointments() {
 
   return (
     <>
-      <div className="p-8 max-w-4xl mx-auto">
+      <div className="flex w-full justify-center px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-4xl p-8">
         
         {/* Cabecera con título y botón de Nuevo Turno */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 mx-auto">
           <h1 className="text-3xl font-bold tracking-tight text-[#1b2a57] md:text-4xl">
             Mis Turnos
           </h1>
@@ -83,7 +84,7 @@ function MyAppointments() {
             ))
           )}
         </div>
-
+      </div>
       </div>
     </>
   );
