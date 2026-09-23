@@ -5,6 +5,7 @@ import {
   Clock3,
   ClipboardPlus,
   Check,
+  ChevronDown
 } from "lucide-react";
 import validateAppointment from "../../helpers/validateAppintment";
 
@@ -106,7 +107,7 @@ function AppointmentForm({ onAddAppointment }) {
         {/* Grilla de Fecha y Hora con buen espacio */}
         <div className="grid gap-5 sm:grid-cols-2">
           {/* Fecha */}
-          <div>
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="date"
               className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"
@@ -123,7 +124,7 @@ function AppointmentForm({ onAddAppointment }) {
               id="date"
               type="date"
               name="date"
-              className={fieldClass}
+              className={`${fieldClass} cursor-pointer h-12 py-0 flex items-center justify-center`}
             />
 
             <ErrorMessage name="date">
@@ -136,7 +137,7 @@ function AppointmentForm({ onAddAppointment }) {
           </div>
 
           {/* Hora */}
-          <div>
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="time"
               className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"
@@ -149,20 +150,27 @@ function AppointmentForm({ onAddAppointment }) {
               Hora
             </label>
 
-            <Field
-              as="select"
-              id="time"
-              name="time"
-              className={`${fieldClass} cursor-pointer`}
-            >
-              <option value="">Seleccioná una hora</option>
+            <div className="relative">
+  <Field
+    as="select"
+    id="time"
+    name="time"
+    className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
+  >
+    <option value="">Seleccioná una hora</option>
 
-              {hours.map((hour) => (
-                <option value={hour} key={hour}>
-                  {hour}
-                </option>
-              ))}
-            </Field>
+    {hours.map((hour) => (
+      <option value={hour} key={hour}>
+        {hour}
+      </option>
+    ))}
+  </Field>
+
+  {/* Flechita personalizada flotante (ahora está fuera del Field, pero dentro del relative) */}
+  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#1b2a57]">
+    <ChevronDown size={18} strokeWidth={2} />
+  </div>
+</div>
 
             <ErrorMessage name="time">
               {(message) => (
@@ -198,7 +206,7 @@ function AppointmentForm({ onAddAppointment }) {
             justify-center
             gap-2.5
             rounded-xl
-            bg-[#004aad]
+            bg-[#004aad]!
             px-5
             py-3.5
             text-sm
