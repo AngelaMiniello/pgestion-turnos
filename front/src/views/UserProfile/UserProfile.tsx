@@ -140,9 +140,12 @@ function UserProfile() {
 
     {/* --- SECCIÓN DE DATOS PERSONALES (GRID) --- */}
     <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">
-      <h2 className="text-xl font-bold text-[#1b2a57] mb-8 border-b pb-3">
-        Información de la Cuenta
-      </h2>
+      {/* Título y línea separadora con espacio real */}
+      <div className="mb-6 pb-4 border-b border-[#1b2a57]">
+        <h2 className="text-xl font-bold text-[#1b2a57]">
+          Información de la Cuenta
+        </h2>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         
