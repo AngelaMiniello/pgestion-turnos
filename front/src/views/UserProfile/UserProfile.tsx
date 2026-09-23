@@ -139,7 +139,7 @@ function UserProfile() {
     </div>
 
     {/* --- SECCIÓN DE DATOS PERSONALES (GRID) --- */}
-    <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100">
+    <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 border border-gray-100 flex flex-col gap-6">
       {/* Título y línea separadora con espacio real */}
       <div className="mb-6 pb-4 border-b border-[#1b2a57]">
         <h2 className="text-xl font-bold text-[#1b2a57]">
