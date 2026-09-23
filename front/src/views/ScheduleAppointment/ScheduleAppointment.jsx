@@ -10,8 +10,8 @@ function ScheduleAppointment() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold tracking-tight text-[#1b2a57] md:text-4xl text-center mb-6">
+    <div className="p-8 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold tracking-tight text-[#1b2a57] md:text-4xl text-center mb-10">
         Agendar Nuevo Turno
       </h1>
 
