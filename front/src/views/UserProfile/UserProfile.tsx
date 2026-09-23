@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { CalendarIcon , PlusIcon, SquareText } from "lucide-react"; 
 
 type User = {
   id: number;
@@ -68,24 +70,63 @@ function UserProfile() {
   };
 
   return (
-    <main className="min-h-[calc(80vh-80px)] bg-[#f5f6f8] py-10 px-4 sm:px-6 lg:px-8 box-border flex w-full justify-center">
-      <div className="max-w-4xl mx-auto flex w-full flex-col gap-4">
+    <main className="min-h-[calc(100vh-80px)] bg-[#f5f6f8] py-10 px-4 sm:px-6 lg:px-8 box-border flex w-full justify-center">
+      <div className="max-w-4xl mx-auto flex w-full flex-row gap-4">
 
         {/* --- TARJETA DE CABECERA (DASHBOARD BANNER) --- */}
-        <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 border border-gray-100">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#1b2a57] text-white flex items-center justify-center text-2xl sm:text-3xl font-bold shadow-inner">
-            {user.name ? getInitials(user.name) : "U"}
+        <div className="flex flex-col sm:flex-col items-center gap-6">
+          <div className="bg-white shadow-md rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 border border-gray-100">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#1b2a57] text-white flex items-center justify-center text-2xl sm:text-3xl font-bold shadow-inner">
+              {user.name ? getInitials(user.name) : "U"}
+            </div>
+            <div className="text-center sm:text-left space-y-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#1b2a57]">
+                {user.name}
+              </h1>
+              <p className="text-sm font-medium text-gray-500">
+                @{displayUsername}
+              </p>
+              <span className="inline-block bg-blue-50 text-[#1b2a57] text-xs font-semibold px-3 py-1 rounded-full mt-2">
+                Cuenta Activa
+              </span>
+            </div>
           </div>
-          <div className="text-center sm:text-left space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#1b2a57]">
-              {user.name}
-            </h1>
-            <p className="text-sm font-medium text-gray-500">
-              @{displayUsername}
-            </p>
-            <span className="inline-block bg-blue-50 text-[#1b2a57] text-xs font-semibold px-3 py-1 rounded-full mt-2">
-              Cuenta Activa
-            </span>
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto bg-white shadow-md rounded-2xl p-6 sm:p-8 items-center border border-gray-100">
+            {/* Botón principal (Fondo azul, texto e icono blancos) */}
+            <Link
+              to="/appointments"
+              className="px-5 py-2.5 bg-[#1b2a57] text-white text-sm font-semibold rounded-xl text-center hover:bg-[#152144] transition shadow-sm flex items-center justify-center gap-2"
+            >
+            <CalendarIcon 
+              size={17} 
+              className="text-white"
+            /> 
+            Mis Turnos
+            </Link>
+  
+            {/* Segundo botón (Fondo blanco, texto y borde azul) */}
+            <Link
+              to="/appointments/schedule"
+              className="px-5 py-2.5 bg-white text-[#1b2a57] border border-[#1b2a57] text-sm font-semibold rounded-xl text-center hover:bg-gray-50 transition shadow-sm flex items-center justify-center gap-2"
+            >
+            <PlusIcon 
+              size={17} 
+              className="text-white"
+            /> 
+            Nuevo Turno
+            </Link>
+             {/*
+            <Link
+              to="/appointments/schedule"
+              className="px-5 py-2.5 bg-white text-[#1b2a57] border border-[#1b2a57] text-sm font-semibold rounded-xl text-center hover:bg-gray-50 transition shadow-sm flex items-center justify-center gap-2"
+            >
+            <SquareText 
+              size={17} 
+              className="text-white"
+            /> 
+              Mis Órdenes 
+            </Link>
+            */}
           </div>
         </div>
 
