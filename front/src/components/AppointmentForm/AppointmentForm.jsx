@@ -1,19 +1,57 @@
 import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import {
-  CalendarDays,
-  Clock3,
-  ClipboardPlus,
-  Check,
-  ChevronDown
+import { useState } from "react";
+import { 
+  CalendarDays, 
+  Clock3, 
+  ClipboardPlus, 
+  Check, 
+  ChevronDown,
+  Stethoscope,
+  Activity,
+  UserCheck
 } from "lucide-react";
 import validateAppointment from "../../helpers/validateAppintment";
 
 function AppointmentForm({ onAddAppointment }) {
-  const initialState = {
-    date: "",
-    time: "",
+  const initialState = { 
+    tipo: "",          // "especialidad" o "practica"
+    especialidad: "", 
+    practica: "", 
+    medico: "", 
+    date: "", 
+    time: "", 
+  }; 
+
+  // Datos mock (idealmente esto vendría de tu backend o props)
+  const especialidades = [
+    "Cardiología",
+    "Pediatría",
+    "Dermatología",
+    "Clínica Médica",
+    "Traumatología"
+  ];
+
+  const practicas = [
+    "Laboratorio de Análisis Clínicos",
+    "Radiografía de Tórax",
+    "Ecografía General",
+    "Resonancia Magnética",
+    "Electrocardiograma"
+  ];
+
+  const medicosPorEspecialidad = {
+    "Cardiología": ["Dr. Pérez, Juan", "Dra. Gómez, María"],
+    "Pediatría": ["Dr. Benítez, Carlos", "Dra. Ruiz, Ana"],
+    "Dermatología": ["Dra. Sosa, Lucía"],
+    "Clínica Médica": ["Dr. Rossi, Esteban", "Dra. Fernandez, Sofia"],
+    "Traumatología": ["Dr. Morales, Jorge"]
   };
+
+  const hours = [ 
+    "08:00", "09:00", "10:00", "11:00", "12:00", 
+    "16:00", "17:00", "18:00", "19:00", "20:00", 
+  ];
 
   const handleSubmit = async (values) => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -40,48 +78,25 @@ function AppointmentForm({ onAddAppointment }) {
     }
   };
 
-  const hours = [
-    "08:00",
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "19:00",
-    "20:00",
-  ];
-
   const fieldClass = `
-    box-border
-    w-full
-    rounded-xl
-    border
-    border-[#dce3ec]
-    bg-[#f9fbfd]
-    px-4
-    py-3.5
-    text-sm
-    text-[#1f3557]
-    outline-none
-    transition-all
-    duration-200
-    hover:border-[#c8d5e5]
-    focus:border-[#004aad]
-    focus:bg-white
-    focus:ring-4
-    focus:ring-[#004aad]/10
+    box-border w-full rounded-xl
+    border border-[#dce3ec] bg-[#f9fbfd]
+    px-4 py-3.5
+    text-sm text-[#1f3557]
+    outline-none transition-all  duration-200
+    hover:border-[#c8d5e5] focus:border-[#004aad] focus:bg-white focus:ring-4  focus:ring-[#004aad]/10
   `;
 
   return (
     <div className="w-full flex justify-center px-4">
-    <Formik
-    initialValues={initialState}
-    validate={validateAppointment}
-    onSubmit={handleSubmit}
-  >
-    <Form className="w-full max-w-xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
+      <Formik
+        initialValues={initialState}
+        validate={validateAppointment}
+        onSubmit={handleSubmit}
+      >
+        {({ values, setFieldValue }) => (
+          <Form className="w-full max-w-xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
+      
       {/* Encabezado */}
       <div className="border-b border-[#edf1f5] px-6 py-7 sm:px-8">
         <div className="flex items-center gap-4">
@@ -105,96 +120,192 @@ function AppointmentForm({ onAddAppointment }) {
       <div className="px-6 py-7 sm:px-8 sm:py-8 flex flex-col gap-6">
         
         {/* Grilla de Fecha y Hora con buen espacio */}
-        <div className="grid gap-5 sm:grid-cols-2">
-          {/* Fecha */}
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="date"
-              className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"
-            >
-              <CalendarDays
-                size={17}
-                strokeWidth={1.8}
-                className="text-[#004aad]"
-              />
-              Fecha
-            </label>
+        {/* PASO 1: ¿Qué tipo de turno querés? */} 
+              <div className="flex flex-col gap-2"> 
+                <label className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
+                  <Stethoscope size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
+                  ¿Qué tipo de atención necesitás? 
+                </label>
 
-            <Field
-              id="date"
-              type="date"
-              name="date"
-              className={`${fieldClass} cursor-pointer h-12 py-0 flex items-center justify-center`}
-            />
+          <div className="relative"> 
+                  <Field 
+                    as="select" 
+                    name="tipo" 
+                    className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
+                    onChange={(e) => {
+                      // Al cambiar de tipo, reseteamos los campos dependientes
+                      setFieldValue("tipo", e.target.value);
+                      setFieldValue("especialidad", "");
+                      setFieldValue("practica", "");
+                      setFieldValue("medico", "");
+                    }}
+                  > 
+                    <option value="">Seleccioná una opción</option> 
+                    <option value="especialidad">Especialidad Médica</option> 
+                    <option value="practica">Práctica / Estudio</option> 
+                  </Field> 
 
-            <ErrorMessage name="date">
-              {(message) => (
-                <p className="mt-2 text-xs font-medium text-[#a80b29]">
-                  {message}
-                </p>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#1b2a57]"> 
+                    <ChevronDown size={18} strokeWidth={2} /> 
+                  </div> 
+                </div> 
+              </div>
+
+          {/* PASO 2A: Si elige Especialidad */} 
+              {values.tipo === "especialidad" && ( 
+                <div className="flex flex-col gap-2 animate-fadeIn"> 
+                  <label htmlFor="especialidad" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
+                    <Stethoscope size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
+                    Especialidad 
+                  </label> 
+
+                  <div className="relative"> 
+                    <Field 
+                      as="select" 
+                      id="especialidad" 
+                      name="especialidad" 
+                      className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
+                      onChange={(e) => {
+                        setFieldValue("especialidad", e.target.value);
+                        setFieldValue("medico", ""); // Reseteamos médico si cambia especialidad
+                      }}
+                    > 
+                      <option value="">Seleccioná una especialidad</option> 
+                      {especialidades.map((esp) => ( 
+                        <option value={esp} key={esp}>{esp}</option> 
+                      ))} 
+                    </Field> 
+
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#1b2a57]"> 
+                      <ChevronDown size={18} strokeWidth={2} /> 
+                    </div> 
+                  </div> 
+                </div> 
               )}
-            </ErrorMessage>
-          </div>
 
-          {/* Hora */}
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="time"
-              className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"
-            >
-              <Clock3
-                size={17}
-                strokeWidth={1.8}
-                className="text-[#004aad]"
-              />
-              Hora
-            </label>
 
-            <div className="relative">
-  <Field
-    as="select"
-    id="time"
-    name="time"
-    className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
-  >
-    <option value="">Seleccioná una hora</option>
+        {/* PASO 2B: Si elige Práctica */} 
+              {values.tipo === "practica" && ( 
+                <div className="flex flex-col gap-2 animate-fadeIn"> 
+                  <label htmlFor="practica" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
+                    <Activity size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
+                    Práctica o Estudio 
+                  </label> 
 
-    {hours.map((hour) => (
-      <option value={hour} key={hour}>
-        {hour}
-      </option>
-    ))}
-  </Field>
+                  <div className="relative"> 
+                    <Field 
+                      as="select" 
+                      id="practica" 
+                      name="practica" 
+                      className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
+                    > 
+                      <option value="">Seleccioná una práctica</option> 
+                      {practicas.map((prac) => ( 
+                        <option value={prac} key={prac}>{prac}</option> 
+                      ))} 
+                    </Field> 
 
-  {/* Flechita personalizada flotante (ahora está fuera del Field, pero dentro del relative) */}
-  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#1b2a57]">
-    <ChevronDown size={18} strokeWidth={2} />
-  </div>
-</div>
-
-            <ErrorMessage name="time">
-              {(message) => (
-                <p className="mt-2 text-xs font-medium text-[#a80b29]">
-                  {message}
-                </p>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#1b2a57]"> 
+                      <ChevronDown size={18} strokeWidth={2} /> 
+                    </div> 
+                  </div> 
+                </div> 
               )}
-            </ErrorMessage>
-          </div>
-        </div>
 
-        {/* Información adicional */}
-        <div className="flex items-start gap-3 rounded-xl bg-[#f7faff] px-4 py-3.5">
-          <CalendarDays
-            size={18}
-            strokeWidth={1.8}
-            className="mt-0.5 shrink-0 text-[#004aad]"
-          />
+{/* PASO 3: Selección de Médico (Solo si eligió Especialidad) */} 
+              {values.tipo === "especialidad" && values.especialidad && ( 
+                <div className="flex flex-col gap-2 animate-fadeIn"> 
+                  <label htmlFor="medico" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
+                    <UserCheck size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
+                    Profesional 
+                  </label> 
 
-          <p className="text-xs leading-5 text-[#68758a]">
-            Seleccioná una fecha y horario disponible para solicitar tu
-            turno. La solicitud quedará registrada en tu cuenta.
-          </p>
-        </div>
+                  <div className="relative"> 
+                    <Field 
+                      as="select" 
+                      id="medico" 
+                      name="medico" 
+                      className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
+                    > 
+                      <option value="">Seleccioná un profesional</option> 
+                      {medicosPorEspecialidad[values.especialidad]?.map((med) => ( 
+                        <option value={med} key={med}>{med}</option> 
+                      ))} 
+                    </Field> 
+
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#1b2a57]"> 
+                      <ChevronDown size={18} strokeWidth={2} /> 
+                    </div> 
+                  </div> 
+                </div> 
+              )}
+
+              {/* PASO 4: Fecha y Hora (Aparecen una vez que avanzó en la selección) */} 
+              {((values.tipo === "especialidad" && values.especialidad && values.medico) || (values.tipo === "practica" && values.practica)) && (
+                <div className="grid gap-5 sm:grid-cols-2 animate-fadeIn"> 
+                  
+                  {/* Fecha */} 
+                  <div className="flex flex-col gap-2"> 
+                    <label htmlFor="date" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
+                      <CalendarDays size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
+                      Fecha 
+                    </label> 
+
+                    <Field 
+                      id="date" 
+                      type="date" 
+                      name="date" 
+                      className={`${fieldClass} cursor-pointer h-12 py-0 flex items-center justify-center`} 
+                    /> 
+
+                    <ErrorMessage name="date"> 
+                      {(message) => ( 
+                        <p className="mt-1 text-xs font-medium text-[#a80b29]">{message}</p> 
+                      )} 
+                    </ErrorMessage> 
+                  </div> 
+
+                  {/* Hora */} 
+                  <div className="flex flex-col gap-2"> 
+                    <label htmlFor="time" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
+                      <Clock3 size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
+                      Hora 
+                    </label> 
+
+                    <div className="relative"> 
+                      <Field 
+                        as="select" 
+                        id="time" 
+                        name="time" 
+                        className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`} 
+                      > 
+                        <option value="">Seleccioná una hora</option> 
+                        {hours.map((hour) => ( 
+                          <option value={hour} key={hour}>{hour}</option> 
+                        ))} 
+                      </Field> 
+
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#1b2a57]"> 
+                        <ChevronDown size={18} strokeWidth={2} /> 
+                      </div> 
+                    </div> 
+
+                    <ErrorMessage name="time"> 
+                      {(message) => ( 
+                        <p className="mt-1 text-xs font-medium text-[#a80b29]">{message}</p> 
+                      )} 
+                    </ErrorMessage> 
+                  </div> 
+                </div> 
+              )} 
+
+              {/* Información adicional */} 
+              <div className="flex items-start gap-3 rounded-xl bg-[#f7faff] px-4 py-3.5"> 
+                <CalendarDays size={18} strokeWidth={1.8} className="mt-0.5 shrink-0 text-[#004aad]" /> 
+                <p className="text-xs leading-5 text-[#68758a]"> 
+                  Seleccioná la categoría y completá los campos disponibles para confirmar tu turno. Quedará registrado en tu cuenta. 
+                </p> 
+              </div>
 
         {/* Botón */}
         <button
@@ -234,11 +345,12 @@ function AppointmentForm({ onAddAppointment }) {
           </p>
         </div>
 
-      </div>
-    </Form>
-  </Formik>
-</div>
-  );
+            </div> 
+          </Form> 
+        )}
+      </Formik> 
+    </div> 
+  ); 
 }
 
 export default AppointmentForm;
