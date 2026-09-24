@@ -1,6 +1,5 @@
 import {
   IsDateString,
-  IsNumber,
   IsString,
   IsOptional,
   IsIn
@@ -9,16 +8,30 @@ import {
 class AppointmentDto {
 
   @IsDateString({}, {
-  message: "La fecha debe estar en un formato válido (YYYY-MM-DD o ISO)."
+    message: "La fecha debe estar en un formato válido (YYYY-MM-DD o ISO)."
   })
   date: string;
 
-  @IsNumber({}, { message: "El userId debe ser un número." })
-  userId: number;
+  @IsString({ message: "La hora es obligatoria." })
+  time: string;
+
+  @IsString({ message: "El tipo de turno es obligatorio." })
+  @IsIn(["especialidad", "practica"], {
+    message: "El tipo debe ser 'especialidad' o 'practica'."
+  })
+  tipo: string;
 
   @IsOptional()
   @IsString()
-  time: string; 
+  especialidad?: string;
+
+  @IsOptional()
+  @IsString()
+  practica?: string;
+
+  @IsOptional()
+  @IsString()
+  medico?: string;
 
   @IsOptional()
   @IsString()
@@ -26,6 +39,9 @@ class AppointmentDto {
     message: "El estado debe ser 'active' o 'cancelled'."
   })
   status?: string; 
+
+  // Ajustar esto según si userId es de tipo string (ObjectId) o number
+  userId: any; 
 }
 
 export default AppointmentDto;

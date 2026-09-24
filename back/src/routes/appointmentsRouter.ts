@@ -14,7 +14,7 @@ appointmentsRouter.get("/", getAllAppointmentsController);
 // GET /appointments/:id para obtener un turno x id
 appointmentsRouter.get("/:id", getAppointmentByIdController);
 
-// POST /appointments/schedule va a crear un nuevo turno
+// POST /appointments/
 appointmentsRouter.post("/", createAppointmentController);
 
 // PUT /appointments/cancel va a cancelar un turno

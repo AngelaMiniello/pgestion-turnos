@@ -42,11 +42,15 @@ export const getAppointmentByIdController = async (req: Request, res: Response) 
 
 export const createAppointmentController = async (req: Request, res: Response) => {
     try {
-        const { date, time, userId } = req.body;
+        const { date, time, tipo, especialidad, practica, medico, userId } = req.body;
 
         const newAppointment = await createAppointmentService(
             date,
             time,
+            tipo,
+            especialidad,
+            practica,
+            medico,
             userId
         );
 

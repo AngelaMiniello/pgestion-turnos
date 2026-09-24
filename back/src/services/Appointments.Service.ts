@@ -28,10 +28,15 @@ export const getAppointmentByIdService = async (id: number): Promise<Appointment
 
 // Crear un nuevo turno
 export const createAppointmentService = async (
-    //Recibe la fecha, hora y userId.
+
     date: string,
     time: string,
-    userId: number
+    tipo: string,
+    especialidad: string,
+    practica: string,
+    medico: string,
+    userId: number // o string, dependiendo de tu base
+
 ): Promise<Appointment> => {
 
     if (!userId) {//Valida que userId exista.
@@ -40,15 +45,23 @@ export const createAppointmentService = async (
 
     //  Validar que el usuario exista (usando tu método findById)
     const user = await UserRepository.findById(userId);
-  
+
+ 
+
     if (!user) {
+
         throw new Error("El usuario no existe.");
-    } 
+
+    }
 
     //  Crear el turno con el repositorio personalizado
     const newAppointment = AppointmentRepository.create({
         date,
         time,
+        tipo,
+        especialidad: tipo === "especialidad" ? especialidad : null,
+        practica: tipo === "practica" ? practica : null,
+        medico: tipo === "especialidad" ? medico : null,
         status: "active",
         user: user,
     });
