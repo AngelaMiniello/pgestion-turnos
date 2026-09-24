@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 import router from "./routes/indexRouter";
 import credentialRouter from "./routes/credentialsRouter";
+import doctorRouter from "./routes/doctor.router";
 
 const server = express();
 
@@ -20,5 +21,6 @@ server.use(express.json());
 
 server.use(router);
 server.use("/credentials", credentialRouter);
+server.use ("/doctors", doctorRouter);
 
 export default server;

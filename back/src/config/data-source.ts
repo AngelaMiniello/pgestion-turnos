@@ -4,6 +4,9 @@ import { User } from "../entities/User";
 import { Credential } from "../entities/Credentials";
 import { Appointment } from "../entities/Appointments";
 import dotenv from "dotenv";
+import { Doctor } from "../entities/Doctor";
+import { Specialty } from "../entities/Specialty";
+import { DoctorSchedule } from "../entities/DoctorSchedule";
 
 dotenv.config();
 
@@ -17,7 +20,7 @@ export const AppDataSource = new DataSource(
 
         synchronize: true,
         logging: false,
-        entities: [User, Credential, Appointment],
+        entities: [User, Credential, Appointment, Doctor, Specialty, DoctorSchedule ],
         subscribers: [],
         migrations: [],
 

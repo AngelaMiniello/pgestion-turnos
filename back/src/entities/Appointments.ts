@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { User } from "./User";
+import { Doctor } from "./Doctor";
 
 @Entity()
 export class Appointment {
@@ -27,6 +28,6 @@ export class Appointment {
   @Column({ nullable: true })
   practica: string | null;    
 
-  @Column({ nullable: true })
-  medico: string | null;    
+  @ManyToOne(() => Doctor, (doctor) => doctor.appointments, { nullable: true })
+  medico: Doctor | null;    
 }
