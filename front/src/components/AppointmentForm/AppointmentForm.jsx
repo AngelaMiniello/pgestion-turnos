@@ -1,57 +1,41 @@
 import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { useState } from "react";
-import { 
-  CalendarDays, 
-  Clock3, 
-  ClipboardPlus, 
-  Check, 
-  ChevronDown,
-  Stethoscope,
-  Activity,
-  UserCheck
-} from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import {  CalendarDays,  Clock3,  ClipboardPlus,  Check,  ChevronDown, Stethoscope, Activity, UserCheck } from "lucide-react";
 import validateAppointment from "../../helpers/validateAppintment";
 
+const initialState = {
+  tipo: "",
+  especialidad: "",
+  practica: "",
+  medico: "",
+  date: "",
+  time: ""
+};
+
 function AppointmentForm({ onAddAppointment }) {
-  const initialState = { 
-    tipo: "",          // "especialidad" o "practica"
-    especialidad: "", 
-    practica: "", 
-    medico: "", 
-    date: "", 
-    time: "", 
-  }; 
+  const [specialties, setSpecialties] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
 
-  // Datos mock (idealmente esto vendría de tu backend o props)
-  const especialidades = [
-    "Cardiología",
-    "Pediatría",
-    "Dermatología",
-    "Clínica Médica",
-    "Traumatología"
-  ];
+  // Horarios fijos de ejemplo (puedes ajustarlos o traerlos del backend después)
+  const hours = ["08:00", "09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00"];
+  const practicas = ["Analisis de sangre", "Radiografia", "Electrocardiograma", "Resonancia"];
 
-  const practicas = [
-    "Laboratorio de Análisis Clínicos",
-    "Radiografía de Tórax",
-    "Ecografía General",
-    "Resonancia Magnética",
-    "Electrocardiograma"
-  ];
+  useEffect(() => {
+    // Cargar especialidades desde el backend
+    axios.get('http://localhost:3000/specialties')
+      .then(response => setSpecialties(response.data))
+      .catch(error => console.error("Error cargando especialidades", error));
 
-  const medicosPorEspecialidad = {
-    "Cardiología": ["Dr. Pérez, Juan", "Dra. Gómez, María"],
-    "Pediatría": ["Dr. Benítez, Carlos", "Dra. Ruiz, Ana"],
-    "Dermatología": ["Dra. Sosa, Lucía"],
-    "Clínica Médica": ["Dr. Rossi, Esteban", "Dra. Fernandez, Sofia"],
-    "Traumatología": ["Dr. Morales, Jorge"]
-  };
-
-  const hours = [ 
-    "08:00", "09:00", "10:00", "11:00", "12:00", 
-    "16:00", "17:00", "18:00", "19:00", "20:00", 
-  ];
+    // Cargar médicos desde el backend
+    axios.get('http://localhost:3000/doctors')
+      .then(response => {
+        setDoctors(response.data);
+        setFilteredDoctors(response.data);
+      })
+      .catch(error => console.error("Error cargando médicos", error));
+  }, []);
 
   const handleSubmit = async (values) => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -63,7 +47,7 @@ function AppointmentForm({ onAddAppointment }) {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/appointments`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/appointments`,
         {
           ...values,
           userId: user.id,
@@ -71,11 +55,21 @@ function AppointmentForm({ onAddAppointment }) {
       );
 
       alert("Turno solicitado con éxito");
-      onAddAppointment(response.data);
+      if (onAddAppointment) onAddAppointment(response.data);
     } catch (error) {
       console.error(error);
       alert("No se pudo solicitar el turno. Intentá nuevamente.");
     }
+  };
+
+  // Filtrar médicos dinámicamente cuando el usuario selecciona una especialidad
+  const handleSpecialtySelect = (specialtyName, setFieldValue) => {
+    setFieldValue("especialidad", specialtyName);
+    setFieldValue("medico", ""); // Reseteamos el médico seleccionado
+
+    // Filtramos los médicos que coincidan con la especialidad seleccionada
+    const filtered = doctors.filter(doc => doc.specialty?.name === specialtyName);
+    setFilteredDoctors(filtered);
   };
 
   const fieldClass = `
@@ -97,61 +91,61 @@ function AppointmentForm({ onAddAppointment }) {
         {({ values, setFieldValue }) => (
           <Form className="w-full max-w-xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
       
-      {/* Encabezado */}
-      <div className="border-b border-[#edf1f5] px-6 py-7 sm:px-8">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#e8f2ff] text-[#004aad]">
-            <ClipboardPlus size={24} strokeWidth={1.8} />
-          </div>
-
-          <div>
-            <h2 className="text-xl font-bold text-[#073b7a] sm:text-2xl">
-              Solicitar turno
-            </h2>
-
-            <p className="mt-1 text-xs leading-5 text-[#8a98aa] sm:text-sm">
-              Elegí el día y horario que prefieras para tu consulta.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Campos y Secciones */}
-      <div className="px-6 py-7 sm:px-8 sm:py-8 flex flex-col gap-6">
-        
-        {/* Grilla de Fecha y Hora con buen espacio */}
-        {/* PASO 1: ¿Qué tipo de turno querés? */} 
-              <div className="flex flex-col gap-2"> 
-                <label className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
-                  <Stethoscope size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
-                  ¿Qué tipo de atención necesitás? 
-                </label>
-
-          <div className="relative"> 
-                  <Field 
-                    as="select" 
-                    name="tipo" 
-                    className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
-                    onChange={(e) => {
-                      // Al cambiar de tipo, reseteamos los campos dependientes
-                      setFieldValue("tipo", e.target.value);
-                      setFieldValue("especialidad", "");
-                      setFieldValue("practica", "");
-                      setFieldValue("medico", "");
-                    }}
-                  > 
-                    <option value="">Seleccioná una opción</option> 
-                    <option value="especialidad">Especialidad Médica</option> 
-                    <option value="practica">Práctica / Estudio</option> 
-                  </Field> 
-
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#1b2a57]"> 
-                    <ChevronDown size={18} strokeWidth={2} /> 
-                  </div> 
-                </div> 
+          {/* Encabezado */}
+          <div className="border-b border-[#edf1f5] px-6 py-7 sm:px-8">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#e8f2ff] text-[#004aad]">
+                <ClipboardPlus size={24} strokeWidth={1.8} />
               </div>
 
-          {/* PASO 2A: Si elige Especialidad */} 
+              <div>
+                <h2 className="text-xl font-bold text-[#073b7a] sm:text-2xl">
+                  Solicitar turno
+                </h2>
+
+                <p className="mt-1 text-xs leading-5 text-[#8a98aa] sm:text-sm">
+                  Elegí el día y horario que prefieras para tu consulta.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Campos y Secciones */}
+          <div className="px-6 py-7 sm:px-8 sm:py-8 flex flex-col gap-6">
+        
+          {/* Grilla de Fecha y Hora con buen espacio */}
+            {/* PASO 1: ¿Qué tipo de turno querés? */} 
+            <div className="flex flex-col gap-2"> 
+              <label className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
+                <Stethoscope size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
+                  ¿Qué tipo de atención necesitás? 
+              </label>
+
+              <div className="relative"> 
+                <Field 
+                  as="select" 
+                  name="tipo" 
+                  className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
+                  onChange={(e) => {
+                    // Al cambiar de tipo, reseteamos los campos dependientes
+                    setFieldValue("tipo", e.target.value);
+                    setFieldValue("especialidad", "");
+                    setFieldValue("practica", "");
+                    setFieldValue("medico", "");
+                  }}
+                > 
+                  <option value="">Seleccioná una opción</option> 
+                  <option value="especialidad">Especialidad Médica</option> 
+                  <option value="practica">Práctica / Estudio</option> 
+                </Field> 
+
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#1b2a57]"> 
+                  <ChevronDown size={18} strokeWidth={2} /> 
+                </div> 
+              </div> 
+            </div>
+
+            {/* PASO 2A: Si elige Especialidad */} 
               {values.tipo === "especialidad" && ( 
                 <div className="flex flex-col gap-2 animate-fadeIn"> 
                   <label htmlFor="especialidad" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
@@ -165,14 +159,11 @@ function AppointmentForm({ onAddAppointment }) {
                       id="especialidad" 
                       name="especialidad" 
                       className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
-                      onChange={(e) => {
-                        setFieldValue("especialidad", e.target.value);
-                        setFieldValue("medico", ""); // Reseteamos médico si cambia especialidad
-                      }}
+                      onChange={(e) => handleSpecialtySelect(e.target.value, setFieldValue)}
                     > 
                       <option value="">Seleccioná una especialidad</option> 
-                      {especialidades.map((esp) => ( 
-                        <option value={esp} key={esp}>{esp}</option> 
+                      {specialties.map((esp) => (
+                        <option value={esp.name} key={esp.id}>{esp.name}</option>
                       ))} 
                     </Field> 
 
@@ -184,7 +175,7 @@ function AppointmentForm({ onAddAppointment }) {
               )}
 
 
-        {/* PASO 2B: Si elige Práctica */} 
+            {/* PASO 2B: Si elige Práctica */} 
               {values.tipo === "practica" && ( 
                 <div className="flex flex-col gap-2 animate-fadeIn"> 
                   <label htmlFor="practica" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
@@ -212,7 +203,7 @@ function AppointmentForm({ onAddAppointment }) {
                 </div> 
               )}
 
-{/* PASO 3: Selección de Médico (Solo si eligió Especialidad) */} 
+            {/* PASO 3: Selección de Médico (Solo si eligió Especialidad) */} 
               {values.tipo === "especialidad" && values.especialidad && ( 
                 <div className="flex flex-col gap-2 animate-fadeIn"> 
                   <label htmlFor="medico" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
@@ -228,8 +219,8 @@ function AppointmentForm({ onAddAppointment }) {
                       className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
                     > 
                       <option value="">Seleccioná un profesional</option> 
-                      {medicosPorEspecialidad[values.especialidad]?.map((med) => ( 
-                        <option value={med} key={med}>{med}</option> 
+                      {filteredDoctors.map((med) => (
+                        <option value={med.name} key={med.id}>{med.name}</option>
                       ))} 
                     </Field> 
 
@@ -307,43 +298,29 @@ function AppointmentForm({ onAddAppointment }) {
                 </p> 
               </div>
 
-        {/* Botón */}
-        <button
-          type="submit"
-          className="
-            flex
-            w-full
-            items-center
-            justify-center
-            gap-2.5
-            rounded-xl
-            bg-[#004aad]!
-            px-5
-            py-3.5
-            text-sm
-            font-bold
-            text-white
-            shadow-[0_8px_20px_rgba(0,74,173,0.18)]
-            transition-all
-            duration-200
-            hover:-translate-y-0.5
-            hover:bg-[#073b7a]
-            hover:shadow-[0_12px_28px_rgba(0,74,173,0.22)]
-            focus:outline-none
-            focus-visible:ring-2
-            focus-visible:ring-[#004aad]/30
-          "
-        >
-          <Check size={18} strokeWidth={2.2} />
-          Solicitar turno
-        </button>
+              {/* Botón */}
+              <button
+                type="submit"
+                className="
+                  flex items-center justify-center gap-2.5
+                  rounded-xl bg-[#004aad]!
+                  px-5 py-3.5
+                  text-smfont-bold text-white
+                  shadow-[0_8px_20px_rgba(0,74,173,0.18)]
+                  transition-all duration-200
+                  hover:-translate-y-0.5 hover:bg-[#073b7a] hover:shadow-[0_12px_28px_rgba(0,74,173,0.22)]
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-[#004aad]/30"
+                >
+                  <Check size={18} strokeWidth={2.2} />
+                  Solicitar turno
+              </button>
 
-        {/* Footer */}
-        <div className="flex justify-center">
-          <p className="text-center text-xs text-[#8a98aa]">
-            Podés consultar y gestionar tus turnos desde tu cuenta.
-          </p>
-        </div>
+              {/* Footer */}
+              <div className="flex justify-center">
+                <p className="text-center text-xs text-[#8a98aa]">
+                  Podés consultar y gestionar tus turnos desde tu cuenta.
+                </p>
+              </div>
 
             </div> 
           </Form> 
