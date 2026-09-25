@@ -1,6 +1,8 @@
 import { Appointment } from "../entities/Appointments";
+import { Doctor } from "../entities/Doctor";
 import AppointmentRepository from "../repositories/AppointmentsRepository";
 import UserRepository from "../repositories/UserRepository";
+import { DoctorRepository } from "../repositories/DoctorRepository";
 
 // Obtener todos los turnos. Solo retorna el array de turnos.
 export const getAllAppointmentsService = async (userId?: string) => {
@@ -28,46 +30,49 @@ export const getAppointmentByIdService = async (id: number): Promise<Appointment
 
 // Crear un nuevo turno
 export const createAppointmentService = async (
-
     date: string,
     time: string,
     tipo: string,
     especialidad: string,
     practica: string,
-    medico: string,
-    userId: number // o string, dependiendo de tu base
-
+    medicoId: number, // Recibo el ID del médico desde el frontend
+    userId: number
 ): Promise<Appointment> => {
 
-    if (!userId) {//Valida que userId exista.
-        throw new Error("No se puede crear un turno sin userId.");
+    if (!userId) {
+      throw new Error("No se puede crear un turno sin userId.");
     }
 
-    //  Validar que el usuario exista (usando tu método findById)
+    // Validar que el usuario exista
     const user = await UserRepository.findById(userId);
-
- 
-
     if (!user) {
-
-        throw new Error("El usuario no existe.");
-
+      throw new Error("El usuario no existe.");
     }
 
-    //  Crear el turno con el repositorio personalizado
+    // Buscar el objeto Doctor en la base de datos si es por especialidad
+    let doctorEntity = null;
+    if (tipo === "especialidad" && medicoId) {
+        doctorEntity = await DoctorRepository.findOneBy({ id: medicoId });
+        if (!doctorEntity) {
+          throw new Error("El médico seleccionado no existe.");
+        }
+    }
+
+    // Crear la instancia del turno con los tipos correctos (pasando el objeto Doctor)
     const newAppointment = AppointmentRepository.create({
-        date,
-        time,
-        tipo,
-        especialidad: tipo === "especialidad" ? especialidad : null,
-        practica: tipo === "practica" ? practica : null,
-        medico: tipo === "especialidad" ? medico : null,
-        status: "active",
-        user: user,
+      date,
+      time,
+      tipo,
+      especialidad: tipo === "especialidad" ? especialidad : null,
+      practica: tipo === "practica" ? practica : null,
+      medico: doctorEntity, //Acá le paso la entidad Doctor completa, no un string
+      status: "active",
+      user: user,
     });
 
-    // Guardarlo
-    return await AppointmentRepository.save(newAppointment);
+    // Guardarlo y retornarlo como un único objeto
+    const savedAppointment = await AppointmentRepository.save(newAppointment);
+    return savedAppointment;
 };
 
 // Cancelar un turno

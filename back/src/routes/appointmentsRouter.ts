@@ -1,12 +1,17 @@
+//arquitectura MVC (Modelo-Vista-Controlador)
 import { Router } from "express";
 import {
     getAllAppointmentsController,
     getAppointmentByIdController,
     createAppointmentController,
-    cancelAppointmentController
+    cancelAppointmentController,
+    getAvailableAppointmentsController
 } from "../controllers/Appointment.Controller";
 
 const appointmentsRouter: Router = Router();
+
+// GET /appointments/available para buscar turnos filtrados por fecha, médico o especialidad
+appointmentsRouter.get("/available", getAvailableAppointmentsController);
 
 // GET /appointments para obtener todos los turnos
 appointmentsRouter.get("/", getAllAppointmentsController);

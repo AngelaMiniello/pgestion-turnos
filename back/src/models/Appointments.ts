@@ -16,15 +16,15 @@ const appointmentSchema = new mongoose.Schema({
     },
     especialidad: {
         type: String,
-        required: function() { return this.tipo === "especialidad"; }
+        required: function() { return (this as any).tipo === "especialidad"; }
     },
     practica: {
         type: String,
-        required: function() { return this.tipo === "practica"; }
+        required: function() { return (this as any).tipo === "practica"; }
     },
     medico: {
         type: String,
-        required: function() { return this.tipo === "especialidad"; }
+        required: function() { return (this as any).tipo === "especialidad"; }
     },
     status: {
         type: String,
@@ -38,4 +38,4 @@ const appointmentSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("Appointment", appointmentSchema);
+export default module.exports = mongoose.model("Appointment", appointmentSchema);

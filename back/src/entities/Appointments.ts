@@ -7,25 +7,25 @@ export class Appointment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: "varchar" })
   date: string; 
 
-  @Column({ nullable: true })
+  @Column({ type: "varchar", nullable: true })
   time: string | null;
 
-  @Column({ default: "active" })
+  @Column({ type: "varchar", default: "active" })
   status: string;
 
   @ManyToOne(() => User, user => user.appointments, { nullable: false })
   user: User;
 
-  @Column()
+  @Column({ type: "varchar" })
   tipo: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "varchar", nullable: true })
   especialidad: string | null; 
 
-  @Column({ nullable: true })
+  @Column({ type: "varchar", nullable: true })
   practica: string | null;    
 
   @ManyToOne(() => Doctor, (doctor) => doctor.appointments, { nullable: true })

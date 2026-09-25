@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany } from "typeorm";
 import { Specialty } from "./Specialty";
 import { Appointment } from "./Appointments"; 
 import { DoctorSchedule } from "./DoctorSchedule";
+import { Practice } from "./Practices";
 
 @Entity()
 export class Doctor {
@@ -23,5 +24,8 @@ export class Doctor {
   appointments: Appointment[];
 
   @OneToMany(() => DoctorSchedule, (schedule) => schedule.doctor)
-schedules: DoctorSchedule[];
+  schedules: DoctorSchedule[];
+
+  @ManyToMany(() => Practice, (practice) => practice.doctors)
+  practices: Practice[];
 }
