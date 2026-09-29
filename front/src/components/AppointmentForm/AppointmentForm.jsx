@@ -56,9 +56,9 @@ function AppointmentForm({ onAddAppointment }) {
         {
           params: {
             date: selectedDate,
-            especialidad: values.especialidad,
-            practica: values.practica,
-            medico: values.medico
+            specialty: values.specialty,
+            practices: values.practices,
+            doctor: values.doctor
           }
         }
       );
