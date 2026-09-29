@@ -83,24 +83,25 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
 
     let whereCondition: any = { status: "active" };
 
-    // Si el usuario selecciona una fecha, filtramos por el rango de ese día
+    // 1. Como `date` es un varchar ("YYYY-MM-DD"), filtramos por el string exacto recibido
     if (date) {
-      const startOfDay = new Date(date as string);
-      startOfDay.setHours(0, 0, 0, 0);
-      
-      const endOfDay = new Date(date as string);
-      endOfDay.setHours(23, 59, 59, 999);
-
-      whereCondition.date = Between(startOfDay, endOfDay);
+      whereCondition.date = date as string;
     }
 
-    if (medico) whereCondition.medico = medico;
-    if (especialidad) whereCondition.especialidad = especialidad;
+    // 2. Como `medico` es una relación, TypeORM espera un objeto con su ID
+    if (medico) {
+      whereCondition.medico = { id: Number(medico) };
+    }
 
-    // Usamos find con 'where' y 'relations' (equivalente a populate) de TypeORM
+    // 3. `especialidad` en Appointment es un varchar directo
+    if (especialidad) {
+      whereCondition.especialidad = especialidad as string;
+    }
+
+    // 4. Buscamos y traemos las relaciones de user y medico para que la UI tenga toda la info
     const appointments = await appointmentRepository.find({
       where: whereCondition,
-      relations: ["user"] // Trae la relación con el usuario asociado
+      relations: ["user", "medico"] 
     });
 
     return res.status(200).json(appointments);
