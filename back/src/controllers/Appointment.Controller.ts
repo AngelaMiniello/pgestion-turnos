@@ -89,8 +89,13 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
     }
 
     // 2. Como `medico` es una relación, TypeORM espera un objeto con su ID
-    if (medico) {
-      whereCondition.medico = { id: Number(medico) };
+    // --- BLINDAJE CONTRA EL NaN ---
+    // Verificamos que 'medico' exista, no sea un string vacío y sea un número real.
+    if (medico && medico !== "undefined" && medico !== "null") {
+      const medicoId = Number(medico);
+      if (!isNaN(medicoId)) {
+        whereCondition.medico = { id: medicoId };
+      }
     }
 
     // 3. `especialidad` en Appointment es un varchar directo
