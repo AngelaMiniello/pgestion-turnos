@@ -11,6 +11,7 @@ import {
     cancelAppointmentService
 } from "../services/Appointments.Service";
 import { Appointment } from "../entities/Appointments";
+import { User } from "../entities/User";
 import { AppDataSource } from "../config/data-source";
 import { Between } from "typeorm";
 
@@ -109,3 +110,40 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
   }
 };
 
+export const seedAppointments = async () => {
+  const appointmentRepo = AppDataSource.getRepository(Appointment);
+  const userRepo = AppDataSource.getRepository(User);
+  
+  const count = await appointmentRepo.count();
+
+  if (count === 0) {
+    // Buscamos un usuario existente para asignarle el turno (ya que user es obligatorio)
+    const existingUser = await userRepo.findOne({ where: {} });
+
+    if (!existingUser) {
+      console.log("⚠️ Necesitas al menos un usuario en la base de datos para crear turnos de prueba.");
+      return;
+    }
+
+    const today = new Date();
+    
+    for (let i = 1; i <= 7; i++) {
+      const appointmentDate = new Date();
+      appointmentDate.setDate(today.getDate() + i);
+
+      const newAppointment = appointmentRepo.create({
+        date: appointmentDate.toISOString().slice(0, 10),
+        time: "10:00",
+        status: "active",
+        tipo: "Consulta", 
+        user: existingUser,
+        especialidad: "Medicina General",
+        practica: "Control general",
+        medico: null 
+      });
+
+      await appointmentRepo.save(newAppointment);
+    }
+    console.log("✅ Turnos de prueba creados exitosamente.");
+  }
+};
