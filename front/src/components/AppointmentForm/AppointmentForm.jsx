@@ -22,6 +22,16 @@ function AppointmentForm({ onAddAppointment }) {
   // Estado para simular la grilla de turnos disponibles según la imagen de referencia
   const [availableSlots, setAvailableSlots] = useState([]);
   const [hours, setHours] = useState([]);
+  const [activeDates, setActiveDates] = useState([]);
+  
+  useEffect(() => {
+  // Petición para traer las fechas con turnos disponibles
+  axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/appointments/active-dates`)
+    .then(response => {
+      setActiveDates(response.data); // Ej: ["2026-10-02", "2026-10-03"]
+    })
+    .catch(error => console.error("Error al cargar fechas activas", error));
+  }, []);
 
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -212,7 +222,7 @@ function AppointmentForm({ onAddAppointment }) {
 
 
             {/* PASO 2B: Si elige Práctica */} 
-              {values.tipo === "practice" && ( 
+              {values.tipo === "practica" && ( 
                 <div className="flex flex-col gap-2 animate-fadeIn"> 
                   <label htmlFor="practice" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
                     <Activity size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
@@ -297,6 +307,7 @@ function AppointmentForm({ onAddAppointment }) {
                           const dayNum = i + 1;
                           const formattedDate = `2026-09-${dayNum < 10 ? '0' + dayNum : dayNum}`;
                           const isSelected = values.date === formattedDate;
+                          const hasActiveTurn = activeDates.includes(formattedDate);
 
                           return (
                             <button
@@ -304,12 +315,14 @@ function AppointmentForm({ onAddAppointment }) {
                               type="button"
                               onClick={() => handleDateSelection(formattedDate, setFieldValue, values)}
                               className={`h-9 w-9 mx-auto rounded-xl flex items-center justify-center font-medium transition-all ${
-                                isSelected 
-                                  ? 'bg-[#004aad] text-white shadow-md' 
-                                  : 'hover:bg-blue-100 text-slate-700'
-                              }`}
-                            >
-                              {dayNum}
+      isSelected 
+        ? 'bg-[#004aad] text-white shadow-md' 
+        : hasActiveTurn 
+          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-bold' // Estilo para días con turnos (Verde)
+          : 'text-slate-300 cursor-not-allowed' // Días sin turnos
+    }`}
+  >
+    {dayNum}
                             </button>
                           );
                         })}
@@ -323,7 +336,7 @@ function AppointmentForm({ onAddAppointment }) {
                   </div>
 
                   {/* TABLA DE HORARIOS DISPONIBLES (Derecha - 7 columnas) */}
-                  <div className="lg:col-span-7 flex flex-col">
+                  <div className="lg:col-span-7 flex flex-col gap-4">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                         {values.date ? `Fecha seleccionada: ${values.date}` : "Seleccioná una fecha en el calendario"}
