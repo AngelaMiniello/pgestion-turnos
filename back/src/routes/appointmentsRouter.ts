@@ -11,6 +11,9 @@ import {
 
 const appointmentsRouter: Router = Router();
 
+// GET /appointments/active-dates para pintar el calendario
+appointmentsRouter.get("/active-dates", getActiveDatesController);
+
 // GET /appointments/available para buscar turnos filtrados por fecha, médico o especialidad
 appointmentsRouter.get("/available", getAvailableAppointmentsController);
 
@@ -26,7 +29,6 @@ appointmentsRouter.post("/", createAppointmentController);
 // PUT /appointments/cancel va a cancelar un turno
 appointmentsRouter.put("/cancel/:id", cancelAppointmentController);
 
-// GET /appointments/active-dates para pintar el calendario
-appointmentsRouter.get("/active-dates", getActiveDatesController);
+
 
 export default appointmentsRouter;
