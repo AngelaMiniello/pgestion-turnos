@@ -9,6 +9,6 @@ const router = Router();
 router.get("/specialties", getSpecialties);
 router.get("/doctors", getDoctors);
 router.get("/schedules", getDoctorSchedules);
-router.get("/practicas", getPractices);
+router.get("/practices", getPractices);
 
 export default router;

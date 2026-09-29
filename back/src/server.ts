@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+
 import router from "./routes/indexRouter";
 import credentialRouter from "./routes/credentialsRouter";
 import doctorRouter from "./routes/doctor.router";
@@ -8,7 +9,9 @@ import doctorRouter from "./routes/doctor.router";
 const server = express();
 
 const corsOptions = {
-  origin: process.env.FRONT_URL || "http://localhost:5173",
+  origin: [
+    process.env.FRONT_URL || "http://localhost:5173",
+  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -21,6 +24,8 @@ server.use(express.json());
 
 server.use(router);
 server.use("/credentials", credentialRouter);
-server.use ("/doctors", doctorRouter);
+
+// Si duplica las rutas de doctors, revisár su contenido.
+server.use("/doctors", doctorRouter);
 
 export default server;

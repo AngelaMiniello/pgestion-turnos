@@ -1,9 +1,8 @@
-import server from "./server";
+import "dotenv/config";
 import "reflect-metadata";
-import { AppDataSource } from "./config/data-source";
-import dotenv from "dotenv";
 
-dotenv.config();
+import { AppDataSource } from "./config/data-source";
+import server from "./server";
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,4 +17,3 @@ AppDataSource.initialize()
   .catch((error) => {
     console.error("Error al conectar DB:", error);
   });
-
