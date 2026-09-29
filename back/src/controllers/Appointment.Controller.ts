@@ -10,7 +10,7 @@ import {
     createAppointmentService,
     cancelAppointmentService
 } from "../services/Appointments.Service";
-import Appointment from "../models/Appointments";
+import { Appointment } from "../entities/Appointments";
 import { AppDataSource } from "../config/data-source";
 import { Between } from "typeorm";
 
