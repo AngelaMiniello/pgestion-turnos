@@ -30,6 +30,7 @@ export const getAllAppointmentsController = async (req: Request, res: Response) 
 export const getAppointmentByIdController = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id);
+        
         const appointment = await getAppointmentByIdService(id);
 
         if (!appointment) {
