@@ -24,25 +24,27 @@ function AppointmentForm({ onAddAppointment }) {
   const [hours, setHours] = useState([]);
 
   useEffect(() => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
     // Cargar especialidades desde el backend
-    axios.get('http://localhost:3000/specialties')
+    axios.get(`${API_URL}/specialties`)
       .then(response => setSpecialties(response.data))
       .catch(error => console.error("Error cargando especialidades", error));
 
     // Cargar médicos desde el backend
-    axios.get('http://localhost:3000/doctors')
+    axios.get(`${API_URL}/doctors`)
       .then(response => {
         setDoctors(response.data);
         setFilteredDoctors(response.data);
       })
       .catch(error => console.error("Error cargando médicos", error));
-  
-      // Cargar prácticas desde el backend (conectado a tu tabla practice)
-    axios.get('http://localhost:3000/practices')
+ 
+    // Cargar prácticas desde el backend
+    axios.get(`${API_URL}/practices`)
       .then(response => setPractices(response.data))
       .catch(error => console.error("Error cargando prácticas", error));
   }, []);
-
+  
   // Función que se dispara al hacer clic en un día del calendario
   const handleDateSelection = async (selectedDate, setFieldValue, values) => {
     setFieldValue("date", selectedDate);

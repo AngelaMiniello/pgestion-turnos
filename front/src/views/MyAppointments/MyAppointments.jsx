@@ -46,7 +46,7 @@ function MyAppointments() {
 
   return (
     <>
-      <div className="flex w-full justify-center px-4 sm:px-6 lg:px-8">
+      <div className="flex w-full justify-center px-4 sm:px-6 lg:px-8 min-h-[calc(100vh-80px)]">
         <div className="w-full max-w-4xl p-8">
         
         {/* Cabecera con título y botón de Nuevo Turno */}

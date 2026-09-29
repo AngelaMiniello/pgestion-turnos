@@ -173,7 +173,7 @@ function Login() {
                   className="mt-3 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#004aad] px-5 py-3.5 text-sm font-bold text-white 
                     shadow-[0_8px_20px_rgba(0,74,173,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#073b7a] 
                     hover:shadow-[0_12px_28px_rgba(0,74,173,0.22)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#004aad]/30 
-                    disabled:cursor-not-allowed disabled:bg-[#cbd3de] disabled:text-[#7b8797] disabled:shadow-none disabled:hover:translate-y-0 " 
+                    disabled:cursor-not-allowed disabled:bg-[#bec5cf] disabled:text-[#7b8797] disabled:shadow-none disabled:hover:translate-y-0 " 
                 > 
                   Iniciar sesión 
                   <ArrowRight size={18} strokeWidth={2.2} /> 
