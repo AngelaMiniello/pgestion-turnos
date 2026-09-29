@@ -302,7 +302,7 @@ function AppointmentForm({ onAddAppointment }) {
                             <button
                               key={i}
                               type="button"
-                              onClick={() => handleDateSelection(formattedDate, setFieldValue)}
+                              onClick={() => handleDateSelection(formattedDate, setFieldValue, values)}
                               className={`h-9 w-9 mx-auto rounded-xl flex items-center justify-center font-medium transition-all ${
                                 isSelected 
                                   ? 'bg-[#004aad] text-white shadow-md' 
