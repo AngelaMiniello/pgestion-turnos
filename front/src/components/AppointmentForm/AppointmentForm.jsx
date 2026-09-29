@@ -269,7 +269,7 @@ function AppointmentForm({ onAddAppointment }) {
                       <option value="">Cualquier profesional disponible</option> 
 
                       {filteredDoctors.map((med) => (
-                        <option value={med.name} key={med.id}>{med.name}</option>
+                        <option value={med.id} key={med.id}>{med.name}</option>
                       ))} 
                     </Field> 
 
