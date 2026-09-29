@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState, useEffect } from 'react';
-import {  CalendarDays,  Clock3,  ClipboardPlus,  Check,  ChevronDown, Stethoscope, Activity, UserCheck } from "lucide-react";
+import {  CalendarDays,  Clock3,  ClipboardPlus,  Check,  ChevronDown, ChevronRight, ChevronLeft, Stethoscope, Activity, UserCheck } from "lucide-react";
 import validateAppointment from "../../helpers/validateAppintment";
 
 const initialState = {
