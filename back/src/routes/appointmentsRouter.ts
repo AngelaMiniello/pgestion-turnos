@@ -5,7 +5,8 @@ import {
     getAppointmentByIdController,
     createAppointmentController,
     cancelAppointmentController,
-    getAvailableAppointmentsController
+    getAvailableAppointmentsController,
+    getActiveDatesController
 } from "../controllers/Appointment.Controller";
 
 const appointmentsRouter: Router = Router();
@@ -24,5 +25,8 @@ appointmentsRouter.post("/", createAppointmentController);
 
 // PUT /appointments/cancel va a cancelar un turno
 appointmentsRouter.put("/cancel/:id", cancelAppointmentController);
+
+// GET /appointments/active-dates para pintar el calendario
+appointmentsRouter.get("/active-dates", getActiveDatesController);
 
 export default appointmentsRouter;
