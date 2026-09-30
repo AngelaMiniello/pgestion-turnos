@@ -117,6 +117,20 @@ function AppointmentForm({ onAddAppointment }) {
     setFilteredDoctors(filtered);
   };
 
+  // Filtrar médicos dinámicamente cuando el usuario selecciona una práctica
+  const handlePracticeSelect = (practiceId, setFieldValue) => {
+    setFieldValue("practica", practiceId);
+    setFieldValue("medico", ""); // Reseteamos el médico
+ 
+    // Si tu backend te devuelve los médicos asociados a esa práctica, 
+    // podés filtrarlos aquí o hacer un llamado al endpoint correspondiente.
+    // O si los médicos ya traen sus prácticas asociadas en el objeto:
+    const filtered = doctors.filter(doc => 
+      doc.practices?.some(p => p.id === Number(practiceId))
+    );
+    setFilteredDoctors(filtered);
+  };
+
   const fieldClass = `
     box-border w-full rounded-xl
     border border-[#dce3ec] bg-[#f9fbfd]
@@ -235,6 +249,7 @@ function AppointmentForm({ onAddAppointment }) {
                       id="practice" 
                       name="practice" 
                       className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
+                      onChange={(e) => handlePracticeSelect(e.target.value, setFieldValue)}
                     > 
                       <option value="">Seleccioná una práctica</option> 
                       {practices.map((prac) => ( 
@@ -250,7 +265,7 @@ function AppointmentForm({ onAddAppointment }) {
               )}
 
             {/* PASO 3: Selección de Médico (Solo si eligió Especialidad) */} 
-              {values.tipo === "especialidad" && values.especialidad && ( 
+              {((values.tipo === "especialidad" && values.especialidad) || (values.tipo === "practica" && values.practica)) && ( 
                 <div className="flex flex-col gap-2 animate-fadeIn"> 
                   <label htmlFor="medico" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
                     <UserCheck size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
@@ -315,14 +330,14 @@ function AppointmentForm({ onAddAppointment }) {
                               type="button"
                               onClick={() => handleDateSelection(formattedDate, setFieldValue, values)}
                               className={`h-9 w-9 mx-auto rounded-xl flex items-center justify-center font-medium transition-all ${
-      isSelected 
-        ? 'bg-[#004aad] text-white shadow-md' 
-        : hasActiveTurn 
-          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-bold' // Estilo para días con turnos (Verde)
-          : 'text-slate-300 cursor-not-allowed' // Días sin turnos
-    }`}
-  >
-    {dayNum}
+                                isSelected 
+                                  ? 'bg-[#004aad] text-white shadow-md' 
+                                  : hasActiveTurn 
+                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-bold' // Estilo para días con turnos (Verde)
+                                    : 'text-slate-300 cursor-not-allowed' // Días sin turnos
+                              }`}
+                            >
+                              {dayNum}
                             </button>
                           );
                         })}
