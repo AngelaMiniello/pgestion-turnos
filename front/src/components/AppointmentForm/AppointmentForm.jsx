@@ -117,19 +117,22 @@ function AppointmentForm({ onAddAppointment }) {
     setFilteredDoctors(filtered);
   };
 
-  // Filtrar médicos dinámicamente cuando el usuario selecciona una práctica
   const handlePracticeSelect = (practiceId, setFieldValue) => {
-    setFieldValue("practica", practiceId);
-    setFieldValue("medico", ""); // Reseteamos el médico
- 
-    // Si tu backend te devuelve los médicos asociados a esa práctica, 
-    // podés filtrarlos aquí o hacer un llamado al endpoint correspondiente.
-    // O si los médicos ya traen sus prácticas asociadas en el objeto:
-    const filtered = doctors.filter(doc => 
-      doc.practices?.some(p => p.id === Number(practiceId))
-    );
-    setFilteredDoctors(filtered);
-  };
+  setFieldValue("practice", practiceId);
+  setFieldValue("medico", ""); 
+
+  if (!practiceId) {
+    setFilteredDoctors(doctors); // Si deselecciona, mostramos todos de nuevo
+    return;
+  }
+
+  const filtered = doctors.filter(doc => {
+    // Verificamos si el doctor tiene esa práctica en su array (puede venir como ID directo o como objeto .id)
+    return doc.practices?.some(p => (typeof p === 'object' ? p.id : p) === Number(practiceId));
+  });
+
+  setFilteredDoctors(filtered);
+};
 
   const fieldClass = `
     box-border w-full rounded-xl
@@ -236,7 +239,7 @@ function AppointmentForm({ onAddAppointment }) {
 
 
             {/* PASO 2B: Si elige Práctica */} 
-              {values.tipo === "practica" && ( 
+              {values.tipo === "practice" && ( 
                 <div className="flex flex-col gap-2 animate-fadeIn"> 
                   <label htmlFor="practice" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
                     <Activity size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
@@ -253,7 +256,7 @@ function AppointmentForm({ onAddAppointment }) {
                     > 
                       <option value="">Seleccioná una práctica</option> 
                       {practices.map((prac) => ( 
-                        <option value={prac.name} key={prac.id}>{prac.name}</option> 
+                        <option value={prac.id} key={prac.id}>{prac.name}</option> 
                       ))} 
                     </Field> 
 
@@ -264,7 +267,7 @@ function AppointmentForm({ onAddAppointment }) {
                 </div> 
               )}
 
-            {/* PASO 3: Selección de Médico (Solo si eligió Especialidad) */} 
+            {/* PASO 3: Selección de Médico */} 
               {((values.tipo === "especialidad" && values.especialidad) || (values.tipo === "practica" && values.practica)) && ( 
                 <div className="flex flex-col gap-2 animate-fadeIn"> 
                   <label htmlFor="medico" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
