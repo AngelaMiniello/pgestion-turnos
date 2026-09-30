@@ -118,7 +118,7 @@ function AppointmentForm({ onAddAppointment }) {
   };
 
   const handlePracticeSelect = (practiceId, setFieldValue) => {
-  setFieldValue("practice", practiceId);
+  setFieldValue("practica", practiceId);
   setFieldValue("medico", ""); 
 
   if (!practiceId) {
@@ -239,7 +239,7 @@ function AppointmentForm({ onAddAppointment }) {
 
 
             {/* PASO 2B: Si elige Práctica */} 
-              {values.tipo === "practice" && ( 
+              {values.tipo === "practica" && ( 
                 <div className="flex flex-col gap-2 animate-fadeIn"> 
                   <label htmlFor="practice" className="mb-1 flex items-center gap-2 text-sm font-semibold text-[#1f3557]"> 
                     <Activity size={17} strokeWidth={1.8} className="text-[#004aad]" /> 
