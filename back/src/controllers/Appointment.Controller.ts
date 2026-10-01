@@ -76,7 +76,7 @@ export const cancelAppointmentController = async (req: Request, res: Response) =
     }
 };
 
-// Controlador para buscar turnos disponibles por fecha, especialidad y médico
+// Controlador para buscar turnos disponibles (excluyendo los ya reservados)
 export const getAvailableAppointmentsController = async (req: Request, res: Response) => {
   try {
     const { date, medico, especialidad } = req.query;
@@ -84,14 +84,12 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
 
     let whereCondition: any = { status: "active" };
 
-    // 1. Como `date` es un varchar ("YYYY-MM-DD"), filtramos por el string exacto recibido
+    // 1. Filtramos por fecha exacta
     if (date) {
       whereCondition.date = date as string;
     }
 
-    // 2. Como `medico` es una relación, TypeORM espera un objeto con su ID
-    // --- BLINDAJE CONTRA EL NaN ---
-    // Verificamos que 'medico' exista, no sea un string vacío y sea un número real.
+    // 2. Filtramos por médico si viene especificado y es válido
     if (medico && medico !== "undefined" && medico !== "null") {
       const medicoId = Number(medico);
       if (!isNaN(medicoId)) {
@@ -99,18 +97,27 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
       }
     }
 
-    // 3. `especialidad` en Appointment es un varchar directo
     if (especialidad) {
       whereCondition.especialidad = especialidad as string;
     }
 
-    // 4. Buscamos y traemos las relaciones de user y medico para que la UI tenga toda la info
-    const appointments = await appointmentRepository.find({
+    // Buscamos los turnos QUE YA ESTÁN RESERVADOS en la BD
+    const bookedAppointments = await appointmentRepository.find({
       where: whereCondition,
-      relations: ["user", "medico"] 
+      relations: ["medico"] 
     });
 
-    return res.status(200).json(appointments);
+    // Extraemos únicamente las horas ocupadas (ej: ["10:00", "11:00"])
+    const bookedTimes = bookedAppointments.map(app => app.time);
+
+    // Definimos el listado general de horarios en los que se puede dar turnos
+    const allPossibleSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00"];
+
+    // Filtramos el pool general excluyendo los que ya fueron reservados
+    const availableSlots = allPossibleSlots.filter(time => !bookedTimes.includes(time));
+
+    // Devolvemos el array plano de strings con las horas libres (ej: ["09:00", "12:00", "15:00"])
+    return res.status(200).json(availableSlots);
 
   } catch (error: any) {
     return res.status(500).json({ message: "Error al obtener turnos disponibles", error: error.message });
