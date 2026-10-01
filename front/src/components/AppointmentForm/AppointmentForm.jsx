@@ -3,8 +3,6 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState, useEffect } from 'react';
 import {  CalendarDays,  Clock3,  ClipboardPlus,  Check,  ChevronDown, ChevronRight, ChevronLeft, Stethoscope, Activity, UserCheck } from "lucide-react";
 import validateAppointment from "../../helpers/validateAppintment";
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 
 const initialState = {
   tipo: "",
@@ -26,6 +24,24 @@ function AppointmentForm({ onAddAppointment }) {
   const [hours, setHours] = useState([]);
   const [activeDates, setActiveDates] = useState([]);
   
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const handlePrevMonth = () => {
+  setCurrentMonth(prev => {
+    const newDate = new Date(prev);
+    newDate.setMonth(newDate.getMonth() - 1);
+    return newDate;
+  });
+  };
+
+  const handleNextMonth = () => {
+  setCurrentMonth(prev => {
+    const newDate = new Date(prev);
+    newDate.setMonth(newDate.getMonth() + 1);
+    return newDate;
+  });
+  };
+ 
   useEffect(() => {
   // Petición para traer las fechas con turnos disponibles
   axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/appointments/active-dates`)
@@ -307,33 +323,90 @@ function AppointmentForm({ onAddAppointment }) {
                   
                   {/* CALENDARIO ESTILO DOCTORALIA (Izquierda - 4 columnas) */}
                   <div className="lg:col-span-5 rounded-2xl border border-slate-200 p-5 bg-slate-50/50 flex flex-col justify-between">
-                    <Calendar
-                      onChange={(date) => {
-          // Formateamos la fecha seleccionada a YYYY-MM-DD para tu backend
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const day = String(date.getDate()).padStart(2, '0');
-          const formattedDate = `${year}-${month}-${day}`;
-          
-          handleDateSelection(formattedDate, setFieldValue, values);
-        }}
-        value={values.date ? new Date(values.date + 'T00:00:00') : new Date()}
-        minDate={new Date()} // 👈 Bloquea automáticamente todos los días anteriores a hoy
-        tileClassName={({ date, view }) => {
-          if (view === 'month') {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const formattedDate = `${year}-${month}-${day}`;
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold text-[#073b7a] text-base capitalize">
+            {currentMonth.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}
+          </h3>
+          <div className="flex gap-1">
+            <button 
+              type="button" 
+              onClick={handlePrevMonth} 
+              className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600 transition-all"
+            >
+              <ChevronLeft size={16}/>
+            </button>
+            <button 
+              type="button" 
+              onClick={handleNextMonth} 
+              className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600 transition-all"
+            >
+              <ChevronRight size={16}/>
+            </button>
+          </div>
+        </div>
 
-            // Si está en tu lista de turnos activos, le inyectamos una clase verde
-            if (activeDates.includes(formattedDate)) {
-              return 'bg-emerald-100 text-emerald-800 font-bold rounded-full';
+        {/* Días de la semana */}
+        <div className="grid grid-cols-7 text-center text-xs font-bold text-slate-400 mb-2">
+          <span>D</span><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span>
+        </div>
+
+        {/* Días del mes (Generados dinámicamente con tu diseño original) */}
+        <div className="grid grid-cols-7 gap-1 text-center text-sm">
+          {(() => {
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+            
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const daysMarkup = [];
+
+            // Espacios vacíos para alinear el primer día de la semana
+            for (let i = 0; i < firstDayIndex; i++) {
+              daysMarkup.push(<div key={`empty-${i}`} className="h-9 w-9" />);
             }
-          }
-        }}
-        className="rounded-xl border-none shadow-sm bg-white p-3 w-full"
-      />
+
+            // Renderizado de los días
+            for (let dayNum = 1; dayNum <= totalDays; dayNum++) {
+              const dateObj = new Date(year, month, dayNum);
+              const yyyy = year;
+              const mm = String(month + 1).padStart(2, '0');
+              const dd = String(dayNum).padStart(2, '0');
+              const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+              const isSelected = values.date === formattedDate;
+              const hasActiveTurn = activeDates.includes(formattedDate);
+              const isPast = dateObj < today;
+
+              daysMarkup.push(
+                <button
+                  key={formattedDate}
+                  type="button"
+                  disabled={isPast}
+                  onClick={() => handleDateSelection(formattedDate, setFieldValue, values)}
+                  className={`h-9 w-9 mx-auto rounded-xl flex items-center justify-center font-medium transition-all ${
+                    isSelected 
+                      ? 'bg-[#004aad] text-white shadow-md' 
+                      : isPast
+                        ? 'text-slate-200 cursor-not-allowed bg-transparent' // Días pasados atenuados
+                        : hasActiveTurn 
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-bold' // Tu verde original para días con turnos
+                          : 'text-slate-600 hover:bg-slate-200' // Días futuros normales
+                  }`}
+                >
+                  {dayNum}
+                </button>
+              );
+            }
+
+            return daysMarkup;
+          })()}
+        </div>
+      </div>
 
                     <div className="flex items-center gap-4 mt-6 text-xs text-slate-500 pt-3 border-t border-slate-200">
                       <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Disponible</span>
@@ -354,9 +427,8 @@ function AppointmentForm({ onAddAppointment }) {
                         <thead>
                           <tr className="bg-slate-100 text-slate-600 text-xs border-b border-slate-200">
                             <th className="p-3 font-semibold">Hora</th>
-                            <th className="p-3 font-semibold">Profesional</th>
                             <th className="p-3 font-semibold">Especialidad</th>
-                            <th className="p-3 font-semibold">Centro Atención</th>
+                            <th className="p-3 font-semibold">Profesional</th>
                           </tr>
                         </thead>
                         <tbody className="text-xs text-slate-700 divide-y divide-slate-100">
@@ -373,9 +445,15 @@ function AppointmentForm({ onAddAppointment }) {
                                     <Clock3 size={14} className="text-[#004aad]" />
                                     {slot.time}
                                   </td>
-                                  <td className="p-3">{slot.profesional}</td>
-                                  <td className="p-3">{slot.especialidade}</td>
-                                  <td className="p-3">{slot.centro}</td>
+                                  {/* Columna Especialidad */}
+                                  <td className="p-3">
+                                    {slot.especialidad || slot.medico?.specialty?.name || "Especialidad general"}
+                                  </td>
+
+                                  {/* Columna Profesional */}
+                                  <td className="p-3">
+                                    {slot.medico?.name || "Profesional asignado"}
+                                  </td>
                                 </tr>
                               );
                             })
