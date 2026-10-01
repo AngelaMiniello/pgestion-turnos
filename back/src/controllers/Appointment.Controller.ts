@@ -167,7 +167,6 @@ export const getActiveDatesController = async (req: Request, res: Response) => {
   try {
     const appointmentRepository = AppDataSource.getRepository(Appointment);
 
-    // Usamos QueryBuilder de TypeORM para buscar fechas únicas de turnos activos
     const results = await appointmentRepository
       .createQueryBuilder("appointment")
       .select("appointment.date", "date")
@@ -175,9 +174,12 @@ export const getActiveDatesController = async (req: Request, res: Response) => {
       .distinct(true)
       .getRawMany();
 
-    // results devuelve algo como [{ date: "2026-10-02" }, { date: "2026-10-03" }]
-    // Las transformamos en un array plano de strings: ["2026-10-02", "2026-10-03"]
-    const dates = results.map((item) => item.date);
+    // Limpiamos y aseguramos el formato YYYY-MM-DD estricto
+    const dates = results.map((item) => {
+      if (!item.date) return "";
+      // Si viene como Date o string con hora, cortamos los primeros 10 caracteres
+      return String(item.date).slice(0, 10);
+    }).filter(Boolean);
 
     return res.status(200).json(dates);
   } catch (error: any) {
