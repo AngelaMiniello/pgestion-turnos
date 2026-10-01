@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik, useFormik } from "formik";
 import React, { useState, useEffect } from 'react';
 import {  CalendarDays,  Clock3,  ClipboardPlus,  Check,  ChevronDown, ChevronRight, ChevronLeft, Stethoscope, Activity, UserCheck } from "lucide-react";
 import validateAppointment from "../../helpers/validateAppintment";
@@ -18,20 +18,18 @@ function AppointmentForm({ onAddAppointment }) {
   const [doctors, setDoctors] = useState([]);
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [practices, setPractices] = useState([]);
-
   // Estado para simular la grilla de turnos disponibles según la imagen de referencia
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [hours, setHours] = useState([]);
   const [activeDates, setActiveDates] = useState([]);
-  
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const { values, setFieldValue } = useFormik();
 
   const handlePrevMonth = () => {
-  setCurrentMonth(prev => {
-    const newDate = new Date(prev);
-    newDate.setMonth(newDate.getMonth() - 1);
-    return newDate;
-  });
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(newDate.getMonth() - 1);
+      return newDate;
+    });
   };
 
   const handleNextMonth = () => {
@@ -42,14 +40,21 @@ function AppointmentForm({ onAddAppointment }) {
   });
   };
  
-  useEffect(() => {
-  // Petición para traer las fechas con turnos disponibles
-  axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/appointments/active-dates`)
-    .then(response => {
-      setActiveDates(response.data); // Ej: ["2026-10-02", "2026-10-03"]
-    })
-    .catch(error => console.error("Error al cargar fechas activas", error));
-  }, []);
+  const especialidad = values.especialidad;
+  const practica = values.practica;
+
+useEffect(() => {
+  const fetchActiveDates = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/appointments/active-dates');
+      setActiveDates(response.data);
+    } catch (error) {
+      console.error("Error al cargar fechas activas", error);
+    }
+  };
+
+  fetchActiveDates();
+}, [especialidad, practica]);
 
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -169,7 +174,7 @@ function AppointmentForm({ onAddAppointment }) {
         onSubmit={handleSubmit}
       >
         {({ values, setFieldValue }) => (
-          <Form className="w-full max-w-xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
+          <Form className="w-full max-w-2xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
       
           {/* Encabezado */}
           <div className="border-b border-[#edf1f5] px-6 py-7 sm:px-8">
@@ -332,14 +337,14 @@ function AppointmentForm({ onAddAppointment }) {
             <button 
               type="button" 
               onClick={handlePrevMonth} 
-              className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600 transition-all"
+              className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-[#073b7a]! transition-all"
             >
               <ChevronLeft size={16}/>
             </button>
             <button 
               type="button" 
               onClick={handleNextMonth} 
-              className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600 transition-all"
+              className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-[#073b7a]! transition-all"
             >
               <ChevronRight size={16}/>
             </button>
@@ -433,31 +438,38 @@ function AppointmentForm({ onAddAppointment }) {
                         </thead>
                         <tbody className="text-xs text-slate-700 divide-y divide-slate-100">
                           {values.date && availableSlots.length > 0 ? (
-                            availableSlots.map((slot) => {
-                              const isSlotSelected = values.time === slot.time;
-                              return (
-                                <tr 
-                                  key={slot.id} 
-                                  onClick={() => setFieldValue("time", slot.time)}
-                                  className={`cursor-pointer transition-colors ${isSlotSelected ? 'bg-blue-50 font-bold text-[#004aad]' : 'hover:bg-slate-50'}`}
-                                >
-                                  <td className="p-3 flex items-center gap-1.5">
-                                    <Clock3 size={14} className="text-[#004aad]" />
-                                    {slot.time}
-                                  </td>
-                                  {/* Columna Especialidad */}
-                                  <td className="p-3">
-                                    {slot.especialidad || slot.medico?.specialty?.name || "Especialidad general"}
-                                  </td>
+                            availableSlots.map((slotTime) => {
+            // slotTime es un string, ej: "10:00"
+            const isSlotSelected = values.time === slotTime;
+            
+            // Buscamos el nombre del médico seleccionado en el estado para mostrarlo en la tabla
+            const selectedDoctorObj = doctors.find(d => d.id === Number(values.medico));
 
-                                  {/* Columna Profesional */}
-                                  <td className="p-3">
-                                    {slot.medico?.name || "Profesional asignado"}
-                                  </td>
-                                </tr>
-                              );
-                            })
-                          ) : (
+            return (
+              <tr 
+                key={slotTime} 
+                onClick={() => setFieldValue("time", slotTime)}
+                className={`cursor-pointer transition-colors ${isSlotSelected ? 'bg-blue-50 font-bold text-[#004aad]' : 'hover:bg-slate-50'}`}
+              >
+                {/* Columna Hora */}
+                <td className="p-3 flex items-center gap-1.5">
+                  <Clock3 size={14} className="text-[#004aad]" />
+                  {slotTime}
+                </td>
+
+                {/* Columna Especialidad o Práctica elegida */}
+                <td className="p-3">
+                  {values.especialidad || values.practica || "Consulta general"}
+                </td>
+
+                {/* Columna Profesional elegido (o cualquiera) */}
+                <td className="p-3">
+                  {selectedDoctorObj ? selectedDoctorObj.name : "Cualquier profesional disponible"}
+                </td>
+              </tr>
+            );
+          })
+        ) : (
                             <tr>
                               <td colSpan="4" className="p-8 text-center text-slate-400">
                                 {values.date ? "No hay turnos disponibles para esta fecha." : "Hacé clic en un día del calendario para ver los turnos disponibles."}
