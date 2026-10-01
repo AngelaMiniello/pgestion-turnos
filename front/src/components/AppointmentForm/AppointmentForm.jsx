@@ -3,6 +3,8 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState, useEffect } from 'react';
 import {  CalendarDays,  Clock3,  ClipboardPlus,  Check,  ChevronDown, ChevronRight, ChevronLeft, Stethoscope, Activity, UserCheck } from "lucide-react";
 import validateAppointment from "../../helpers/validateAppintment";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const initialState = {
   tipo: "",
@@ -305,47 +307,33 @@ function AppointmentForm({ onAddAppointment }) {
                   
                   {/* CALENDARIO ESTILO DOCTORALIA (Izquierda - 4 columnas) */}
                   <div className="lg:col-span-5 rounded-2xl border border-slate-200 p-5 bg-slate-50/50 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-bold text-[#073b7a] text-base">Septiembre 2026</h3>
-                        <div className="flex gap-1">
-                          <button type="button" className="p-1.5 rounded-lg border bg-white hover:bg-slate-100"><ChevronLeft size={16}/></button>
-                          <button type="button" className="p-1.5 rounded-lg border bg-white hover:bg-slate-100"><ChevronRight size={16}/></button>
-                        </div>
-                      </div>
+                    <Calendar
+                      onChange={(date) => {
+          // Formateamos la fecha seleccionada a YYYY-MM-DD para tu backend
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const formattedDate = `${year}-${month}-${day}`;
+          
+          handleDateSelection(formattedDate, setFieldValue, values);
+        }}
+        value={values.date ? new Date(values.date + 'T00:00:00') : new Date()}
+        minDate={new Date()} // 👈 Bloquea automáticamente todos los días anteriores a hoy
+        tileClassName={({ date, view }) => {
+          if (view === 'month') {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
 
-                      {/* Días de la semana */}
-                      <div className="grid grid-cols-7 text-center text-xs font-bold text-slate-400 mb-2">
-                        <span>D</span><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span>
-                      </div>
-
-                      {/* Días del mes (Simulación interactiva de selección de fecha) */}
-                      <div className="grid grid-cols-7 gap-1 text-center text-sm">
-                        {[...Array(30)].map((_, i) => {
-                          const dayNum = i + 1;
-                          const formattedDate = `2026-09-${dayNum < 10 ? '0' + dayNum : dayNum}`;
-                          const isSelected = values.date === formattedDate;
-                          const hasActiveTurn = activeDates.includes(formattedDate);
-
-                          return (
-                            <button
-                              key={i}
-                              type="button"
-                              onClick={() => handleDateSelection(formattedDate, setFieldValue, values)}
-                              className={`h-9 w-9 mx-auto rounded-xl flex items-center justify-center font-medium transition-all ${
-                                isSelected 
-                                  ? 'bg-[#004aad] text-white shadow-md' 
-                                  : hasActiveTurn 
-                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-bold' // Estilo para días con turnos (Verde)
-                                    : 'text-slate-300 cursor-not-allowed' // Días sin turnos
-                              }`}
-                            >
-                              {dayNum}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
+            // Si está en tu lista de turnos activos, le inyectamos una clase verde
+            if (activeDates.includes(formattedDate)) {
+              return 'bg-emerald-100 text-emerald-800 font-bold rounded-full';
+            }
+          }
+        }}
+        className="rounded-xl border-none shadow-sm bg-white p-3 w-full"
+      />
 
                     <div className="flex items-center gap-4 mt-6 text-xs text-slate-500 pt-3 border-t border-slate-200">
                       <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Disponible</span>
