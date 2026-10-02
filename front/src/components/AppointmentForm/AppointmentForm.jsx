@@ -21,27 +21,26 @@ function AppointmentForm({ onAddAppointment }) {
 
   // Estado para simular la grilla de turnos disponibles según la imagen de referencia
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [hours, setHours] = useState([]);
   const [activeDates, setActiveDates] = useState([]);
-  
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
+  // Calendar navigation
   const handlePrevMonth = () => {
-  setCurrentMonth(prev => {
-    const newDate = new Date(prev);
-    newDate.setMonth(newDate.getMonth() - 1);
-    return newDate;
-  });
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(newDate.getMonth() - 1);
+      return newDate;
+    });
   };
 
   const handleNextMonth = () => {
-  setCurrentMonth(prev => {
-    const newDate = new Date(prev);
-    newDate.setMonth(newDate.getMonth() + 1);
-    return newDate;
-  });
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(newDate.getMonth() + 1);
+      return newDate;
+    });
   };
- 
+
   useEffect(() => {
   // Petición para traer las fechas con turnos disponibles
   axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/appointments/active-dates`)
@@ -325,45 +324,44 @@ function AppointmentForm({ onAddAppointment }) {
                   <div className="lg:col-span-5 rounded-2xl border border-slate-200 p-5 bg-slate-50/50 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-[#073b7a] text-base capitalize">
-            {currentMonth.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}
-          </h3>
-          <div className="flex gap-1">
-            <button 
+                        <h3 className="font-bold text-[#073b7a] text-base capitalize">
+                          {currentMonth.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}
+                        </h3>
+                        <div className="flex gap-1">
+                          <button 
               type="button" 
               onClick={handlePrevMonth} 
               className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600 transition-all"
             >
               <ChevronLeft size={16}/>
             </button>
-            <button 
+                           <button 
               type="button" 
               onClick={handleNextMonth} 
               className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600 transition-all"
             >
               <ChevronRight size={16}/>
             </button>
-          </div>
-        </div>
+                        </div>
+                      </div>
 
-        {/* Días de la semana */}
-        <div className="grid grid-cols-7 text-center text-xs font-bold text-slate-400 mb-2">
-          <span>D</span><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span>
-        </div>
+                      {/* Días de la semana */}
+                      <div className="grid grid-cols-7 text-center text-xs font-bold text-slate-400 mb-2">
+                        <span>D</span><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span>
+                      </div>
 
-        {/* Días del mes (Generados dinámicamente con tu diseño original) */}
-        <div className="grid grid-cols-7 gap-1 text-center text-sm">
-          {(() => {
+                      {/* Días del mes (Generados dinámicamente) */}
+                      <div className="grid grid-cols-7 gap-1 text-center text-sm">
+                        {(() => {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
-            
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
             
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            const daysMarkup = [];
+             const daysMarkup = [];
 
             // Espacios vacíos para alinear el primer día de la semana
             for (let i = 0; i < firstDayIndex; i++) {
@@ -377,12 +375,10 @@ function AppointmentForm({ onAddAppointment }) {
               const mm = String(month + 1).padStart(2, '0');
               const dd = String(dayNum).padStart(2, '0');
               const formattedDate = `${yyyy}-${mm}-${dd}`;
-
-              const isSelected = values.date === formattedDate;
-              const hasActiveTurn = activeDates.includes(formattedDate);
-              const isPast = dateObj < today;
-
-              daysMarkup.push(
+const isSelected = values.date === formattedDate;
+                          const hasActiveTurn = activeDates.includes(formattedDate);
+ const isPast = dateObj < today;
+ daysMarkup.push(
                 <button
                   key={formattedDate}
                   type="button"
@@ -400,6 +396,7 @@ function AppointmentForm({ onAddAppointment }) {
                 >
                   {dayNum}
                 </button>
+   
               );
             }
 
@@ -407,7 +404,7 @@ function AppointmentForm({ onAddAppointment }) {
           })()}
         </div>
       </div>
-
+                      
                     <div className="flex items-center gap-4 mt-6 text-xs text-slate-500 pt-3 border-t border-slate-200">
                       <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Disponible</span>
                       <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></span> Feriado</span>
@@ -429,6 +426,7 @@ function AppointmentForm({ onAddAppointment }) {
                             <th className="p-3 font-semibold">Hora</th>
                             <th className="p-3 font-semibold">Profesional</th>
                             <th className="p-3 font-semibold">Especialidad</th>
+                            <th className="p-3 font-semibold">Centro Atención</th>
                           </tr>
                         </thead>
                         <tbody className="text-xs text-slate-700 divide-y divide-slate-100">
