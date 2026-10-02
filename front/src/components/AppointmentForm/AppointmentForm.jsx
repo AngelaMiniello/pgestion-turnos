@@ -169,7 +169,7 @@ function AppointmentForm({ onAddAppointment }) {
       >
         {({ values, setFieldValue }) => (
           <Form>
-            <div className="w-full max-w-4xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
+            <div className="w-full min-w-2xl max-w-3xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
           {/* Encabezado */}
           <div className="border-b border-[#edf1f5] px-6 py-7 sm:px-8">
             <div className="flex items-center gap-4">
@@ -319,7 +319,7 @@ function AppointmentForm({ onAddAppointment }) {
               {/* PASO 4: Fecha y Hora (Aparecen al elegir especialidad o práctica) */} 
               {/* SECCIÓN PRINCIPAL: Calendario a la izquierda y Tabla de turnos a la derecha */}
               {((values.tipo === "especialidad" && values.especialidad) || (values.tipo === "practica" && values.practica)) && (
-                <div className="mt-4 grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4 border-t border-slate-100 animate-fadeIn">
+                <div className="mt-4 grid grid-cols-1 lg:grid-cols-12 gap-8 p-4 border-t border-slate-100 animate-fadeIn">
                   
                   {/* CALENDARIO (Izquierda - 4 columnas) */}
                   <div className="lg:col-span-5 rounded-2xl border border-slate-200 p-5 bg-slate-50/50 flex flex-col justify-between">
