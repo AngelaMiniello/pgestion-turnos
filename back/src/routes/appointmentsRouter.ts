@@ -29,6 +29,4 @@ appointmentsRouter.post("/", createAppointmentController);
 // PUT /appointments/cancel va a cancelar un turno
 appointmentsRouter.put("/cancel/:id", cancelAppointmentController);
 
-
-
 export default appointmentsRouter;

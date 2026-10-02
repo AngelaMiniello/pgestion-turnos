@@ -76,7 +76,7 @@ export const cancelAppointmentController = async (req: Request, res: Response) =
     }
 };
 
-// Controlador para buscar turnos disponibles (excluyendo los ya reservados)
+// Controlador para buscar turnos disponibles por fecha, especialidad y médico
 export const getAvailableAppointmentsController = async (req: Request, res: Response) => {
   try {
     const { date, medico, especialidad } = req.query;
@@ -84,12 +84,14 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
 
     let whereCondition: any = { status: "active" };
 
-    // 1. Filtramos por fecha exacta
+    // 1. Como `date` es un varchar ("YYYY-MM-DD"), filtramos por el string exacto recibido
     if (date) {
       whereCondition.date = date as string;
     }
 
-    // 2. Filtramos por médico si viene especificado y es válido
+    // 2. Como `medico` es una relación, TypeORM espera un objeto con su ID
+    // --- BLINDAJE CONTRA EL NaN ---
+    // Verificamos que 'medico' exista, no sea un string vacío y sea un número real.
     if (medico && medico !== "undefined" && medico !== "null") {
       const medicoId = Number(medico);
       if (!isNaN(medicoId)) {
@@ -97,27 +99,18 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
       }
     }
 
+    // 3. `especialidad` en Appointment es un varchar directo
     if (especialidad) {
       whereCondition.especialidad = especialidad as string;
     }
 
-    // Buscamos los turnos QUE YA ESTÁN RESERVADOS en la BD
-    const bookedAppointments = await appointmentRepository.find({
+    // 4. Buscamos y traemos las relaciones de user y medico para que la UI tenga toda la info
+    const appointments = await appointmentRepository.find({
       where: whereCondition,
-      relations: ["medico"] 
+      relations: ["user", "medico"] 
     });
 
-    // Extraemos únicamente las horas ocupadas (ej: ["10:00", "11:00"])
-    const bookedTimes = bookedAppointments.map(app => app.time);
-
-    // Definimos el listado general de horarios en los que se puede dar turnos
-    const allPossibleSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00"];
-
-    // Filtramos el pool general excluyendo los que ya fueron reservados
-    const availableSlots = allPossibleSlots.filter(time => !bookedTimes.includes(time));
-
-    // Devolvemos el array plano de strings con las horas libres (ej: ["09:00", "12:00", "15:00"])
-    return res.status(200).json(availableSlots);
+    return res.status(200).json(appointments);
 
   } catch (error: any) {
     return res.status(500).json({ message: "Error al obtener turnos disponibles", error: error.message });
@@ -167,6 +160,7 @@ export const getActiveDatesController = async (req: Request, res: Response) => {
   try {
     const appointmentRepository = AppDataSource.getRepository(Appointment);
 
+    // Usamos QueryBuilder de TypeORM para buscar fechas únicas de turnos activos
     const results = await appointmentRepository
       .createQueryBuilder("appointment")
       .select("appointment.date", "date")
@@ -174,12 +168,9 @@ export const getActiveDatesController = async (req: Request, res: Response) => {
       .distinct(true)
       .getRawMany();
 
-    // Limpiamos y aseguramos el formato YYYY-MM-DD estricto
-    const dates = results.map((item) => {
-      if (!item.date) return "";
-      // Si viene como Date o string con hora, cortamos los primeros 10 caracteres
-      return String(item.date).slice(0, 10);
-    }).filter(Boolean);
+    // results devuelve algo como [{ date: "2026-10-02" }, { date: "2026-10-03" }]
+    // Las transformamos en un array plano de strings: ["2026-10-02", "2026-10-03"]
+    const dates = results.map((item) => item.date);
 
     return res.status(200).json(dates);
   } catch (error: any) {
