@@ -79,7 +79,7 @@ export const cancelAppointmentController = async (req: Request, res: Response) =
 // Controlador para buscar turnos disponibles por fecha, especialidad y médico
 export const getAvailableAppointmentsController = async (req: Request, res: Response) => {
   try {
-    const { date, medico, especialidad } = req.query;
+    const { date } = req.query;
     const appointmentRepository = AppDataSource.getRepository(Appointment);
 
     let whereCondition: any = { status: "active" };
@@ -87,21 +87,6 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
     // 1. Como `date` es un varchar ("YYYY-MM-DD"), filtramos por el string exacto recibido
     if (date) {
       whereCondition.date = date as string;
-    }
-
-    // 2. Como `medico` es una relación, TypeORM espera un objeto con su ID
-    // --- BLINDAJE CONTRA EL NaN ---
-    // Verificamos que 'medico' exista, no sea un string vacío y sea un número real.
-    if (medico && medico !== "undefined" && medico !== "null") {
-      const medicoId = Number(medico);
-      if (!isNaN(medicoId)) {
-        whereCondition.medico = { id: medicoId };
-      }
-    }
-
-    // 3. `especialidad` en Appointment es un varchar directo
-    if (especialidad) {
-      whereCondition.especialidad = especialidad as string;
     }
 
     // 4. Buscamos y traemos las relaciones de user y medico para que la UI tenga toda la info
@@ -138,6 +123,9 @@ export const seedAppointments = async () => {
       date: appointmentDate.toISOString().slice(0, 10),
       time: "10:00",
       status: "active",
+      tipo: "Consulta", 
+      especialidad: "Medicina General",
+      practica: "Control general",
     });
 
     await appointmentRepo.save(newAppointment);
