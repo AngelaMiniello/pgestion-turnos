@@ -80,86 +80,54 @@ export const cancelAppointmentController = async (req: Request, res: Response) =
 export const getAvailableAppointmentsController = async (req: Request, res: Response) => {
   try {
     const {
-      date,
-      especialidad,
-      practica,
-      medico,
+      date
     } = req.query;
 
     const appointmentRepository = AppDataSource.getRepository(Appointment);
 
-    const queryBuilder = appointmentRepository
-      .createQueryBuilder("appointment")
-      .leftJoinAndSelect("appointment.medico", "medico")
-      .leftJoinAndSelect("medico.specialty", "specialty")
-      .where("appointment.status = :status", {
-        status: "active",
-      });
-
-     // Solo turnos de la fecha seleccionada
-    if (date) {
-      queryBuilder.andWhere("appointment.date = :date", {
+     const appointments = await appointmentRepository.find({
+      where: {
         date: String(date),
-      });
-    }
+        status: "active",
+      },
+      relations: {
+        medico: {
+          specialty: true,
+        },
+      },
+      order: {
+        time: "ASC",
+      },
+    });
 
-    // Solo turnos que todavía no fueron asignados
-    queryBuilder.andWhere("appointment.userId IS NULL");
+     // Solo mostramos turnos que todavía no fueron reservados
+    const availableAppointments = appointments.filter(
+      (appointment) => appointment.user === null
+    );
 
-    // Filtrar por especialidad
-    if (especialidad) {
-      queryBuilder.andWhere(
-        "(appointment.especialidad = :especialidad OR specialty.name = :especialidad)",
-        {
-          especialidad: String(especialidad),
-        }
-      );
-    }
-
-    // Filtrar por práctica
-    if (practica) {
-      queryBuilder.andWhere(
-        "appointment.practica = :practica",
-        {
-          practica: String(practica),
-        }
-      );
-    }
-
-    // Filtrar por médico
-    if (medico) {
-      queryBuilder.andWhere(
-        "medico.id = :medico",
-        {
-          medico: Number(medico),
-        }
-      );
-    }
-
-    queryBuilder.orderBy("appointment.time", "ASC");
-
-    const appointments = await queryBuilder.getMany();
-
-    // Transformamos la respuesta para que coincida
-    // exactamente con lo que espera el frontend.
-    const availableSlots = appointments.map((appointment) => ({
+    const availableSlots = availableAppointments.map((appointment) => ({
       id: appointment.id,
       time: appointment.time,
 
       profesional:
-        appointment.medico?.name ?? "Cualquier profesional",
+        appointment.medico?.name ??
+        "Profesional disponible",
 
       especialidad:
         appointment.medico?.specialty?.name ??
         appointment.especialidad ??
         "Sin especialidad",
 
-      centro:
-        "Centro de Atención",
+      centro: "Centro de Atención",
 
       medicoId:
         appointment.medico?.id ?? null,
     }));
+
+    console.log(
+      `Turnos disponibles para ${date}:`,
+      availableSlots
+    );
 
     return res.status(200).json(availableSlots);
   } catch (error: any) {
