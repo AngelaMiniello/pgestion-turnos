@@ -141,7 +141,6 @@ export const seedAppointments = async () => {
       tipo: "Consulta", 
       especialidad: "Medicina General",
       practica: "Control general",
-      medico: null 
     });
 
     await appointmentRepo.save(newAppointment);
