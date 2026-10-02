@@ -121,55 +121,59 @@ export const seedAppointments = async () => {
   const appointmentRepo = AppDataSource.getRepository(Appointment);
   const userRepo = AppDataSource.getRepository(User);
   
-  const count = await appointmentRepo.count();
+  const existingUser = await userRepo.findOne({ where: {} });
 
-  if (count === 0) {
-    // Buscamos un usuario existente para asignarle el turno (ya que user es obligatorio)
-    const existingUser = await userRepo.findOne({ where: {} });
-
-    if (!existingUser) {
-      console.log("⚠️ Necesitas al menos un usuario en la base de datos para crear turnos de prueba.");
-      return;
-    }
-
-    const today = new Date();
-    
-    for (let i = 1; i <= 7; i++) {
-      const appointmentDate = new Date();
-      appointmentDate.setDate(today.getDate() + i);
-
-      const newAppointment = appointmentRepo.create({
-        date: appointmentDate.toISOString().slice(0, 10),
-        time: "10:00",
-        status: "active",
-        tipo: "Consulta", 
-        especialidad: "Medicina General",
-        practica: "Control general",
-        medico: null 
-      });
-
-      await appointmentRepo.save(newAppointment);
-    }
-    console.log("✅ Turnos de prueba creados exitosamente.");
+  if (!existingUser) {
+    console.log("⚠️ Necesitas al menos un usuario en la base de datos.");
+    return;
   }
+
+  const today = new Date();
+  
+  for (let i = 1; i <= 7; i++) {
+    const appointmentDate = new Date();
+    appointmentDate.setDate(today.getDate() + i);
+
+    const newAppointment = appointmentRepo.create({
+      date: appointmentDate.toISOString().slice(0, 10),
+      time: "10:00",
+      status: "active",
+      tipo: "Consulta", 
+      especialidad: "Medicina General",
+      practica: "Control general",
+      medico: null 
+    });
+
+    await appointmentRepo.save(newAppointment);
+  }
+  console.log("✅ Turnos de prueba creados exitosamente.");
 };
 
 // Controlador para obtener solo las fechas que tienen turnos activos
 export const getActiveDatesController = async (req: Request, res: Response) => {
   try {
+    const { especialidad, practica, medico } = req.query;
     const appointmentRepository = AppDataSource.getRepository(Appointment);
 
     // Usamos QueryBuilder de TypeORM para buscar fechas únicas de turnos activos
-    const results = await appointmentRepository
+    const queryBuilder = await appointmentRepository
       .createQueryBuilder("appointment")
       .select("appointment.date", "date")
       .where("appointment.status = :status", { status: "active" })
       .andWhere("appointment.userId IS NULL")
-      .distinct(true)
-      .getRawMany();
 
-    // results devuelve algo como [{ date: "2026-10-02" }, { date: "2026-10-03" }]
-    // Las transformamos en un array plano de strings: ["2026-10-02", "2026-10-03"]
+    // Aplicar filtros dinámicos si el frontend los envía
+    if (especialidad) {
+      queryBuilder.andWhere("appointment.especialidad = :especialidad", { especialidad });
+    }
+    if (practica) {
+      queryBuilder.andWhere("appointment.practica = :practica", { practica });
+    }
+    if (medico) {
+      queryBuilder.andWhere("appointment.medico = :medico", { medico });
+    }
+
+    const results = await queryBuilder.distinct(true).getRawMany();
     const dates = results.map((item) => item.date);
 
     return res.status(200).json(dates);
