@@ -427,16 +427,23 @@ const isSelected = values.date === formattedDate;
                             <th className="p-3 font-semibold">Hora</th>
                             <th className="p-3 font-semibold">Profesional</th>
                             <th className="p-3 font-semibold">Especialidad</th>
-                            <th className="p-3 font-semibold">Centro Atención</th>
                           </tr>
                         </thead>
                         <tbody className="text-xs text-slate-700 divide-y divide-slate-100">
                           {values.date && availableSlots.length > 0 ? (
-                            availableSlots.map((slot) => {
+                            availableSlots.map((slot, index) => {
                               const isSlotSelected = values.time === slot.time;
+                              const profesional =
+    slot.medico?.name || "Profesional no asignado";
+
+  const especialidad =
+    slot.medico?.specialty?.name ||
+    slot.especialidad ||
+    "Sin especialidad";
+
                               return (
                                 <tr 
-                                  key={slot.id} 
+                                  key={slot.id ?? `${slot.time}-${index}`} 
                                   onClick={() => setFieldValue("time", slot.time)}
                                   className={`cursor-pointer transition-colors ${isSlotSelected ? 'bg-blue-50 font-bold text-[#004aad]' : 'hover:bg-slate-50'}`}
                                 >
@@ -444,9 +451,8 @@ const isSelected = values.date === formattedDate;
                                     <Clock3 size={14} className="text-[#004aad]" />
                                     {slot.time}
                                   </td>
-                                  <td className="p-3">{slot.profesional}</td>
-                                  <td className="p-3">{slot.especialidaded}</td>
-                                  <td className="p-3">{slot.centro}</td>
+                                  <td className="p-3"> {profesional  || "Profesional no disponible" }</td>
+                                  <td className="p-3">{especialidad || "Especialidad no disponible" }</td>
                                 </tr>
                               );
                             })
