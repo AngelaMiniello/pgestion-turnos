@@ -165,6 +165,7 @@ export const getActiveDatesController = async (req: Request, res: Response) => {
       .createQueryBuilder("appointment")
       .select("appointment.date", "date")
       .where("appointment.status = :status", { status: "active" })
+      .andWhere("appointment.userId IS NULL")
       .distinct(true)
       .getRawMany();
 
