@@ -445,7 +445,7 @@ const isSelected = values.date === formattedDate;
                                     {slot.time}
                                   </td>
                                   <td className="p-3">{slot.profesional}</td>
-                                  <td className="p-3">{slot.especialidade}</td>
+                                  <td className="p-3">{slot.especialidaded}</td>
                                   <td className="p-3">{slot.centro}</td>
                                 </tr>
                               );
