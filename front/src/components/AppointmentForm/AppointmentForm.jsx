@@ -83,9 +83,9 @@ function AppointmentForm({ onAddAppointment }) {
         {
           params: {
             date: selectedDate,
-            specialty: values.specialty,
-            practices: values.practices,
-            doctor: values.doctor
+            especialidad: values.especialidad,
+            practica: values.practica,
+            medico: values.medico
           }
         }
       );
@@ -168,7 +168,7 @@ function AppointmentForm({ onAddAppointment }) {
         onSubmit={handleSubmit}
       >
         {({ values, setFieldValue }) => (
-          <Form className="w-full max-w-xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
+          <Form className="w-full max-w-2xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
       
           {/* Encabezado */}
           <div className="border-b border-[#edf1f5] px-6 py-7 sm:px-8">
@@ -329,16 +329,16 @@ function AppointmentForm({ onAddAppointment }) {
                         </h3>
                         <div className="flex gap-1">
                           <button 
-              type="button" 
-              onClick={handlePrevMonth} 
-              className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600 transition-all"
-            >
-              <ChevronLeft size={16}/>
-            </button>
+                            type="button" 
+                            onClick={handlePrevMonth} 
+                            className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600! transition-all"
+                          >
+                          <ChevronLeft size={16}/>
+                          </button>
                            <button 
               type="button" 
               onClick={handleNextMonth} 
-              className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600 transition-all"
+              className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600! transition-all"
             >
               <ChevronRight size={16}/>
             </button>
