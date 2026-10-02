@@ -42,9 +42,11 @@ function AppointmentForm({ onAddAppointment }) {
  
   // Cargar fechas activas al iniciar o montar el componente
   useEffect(() => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
     const fetchActiveDates = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/appointments/active-dates');
+        const response = await axios.get('${API_URL}/appointments/active-dates');
         setActiveDates(response.data);
       } catch (error) {
         console.error("Error al cargar fechas activas", error);
