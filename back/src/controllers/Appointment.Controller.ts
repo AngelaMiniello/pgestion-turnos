@@ -79,18 +79,21 @@ export const cancelAppointmentController = async (req: Request, res: Response) =
 // Controlador para buscar turnos disponibles por fecha, especialidad y médico
 export const getAvailableAppointmentsController = async (req: Request, res: Response) => {
   try {
-    const {
-      date
-    } = req.query;
-
+    const { date } = req.query;
     const appointmentRepository = AppDataSource.getRepository(Appointment);
 
-     const appointments = await appointmentRepository.find({
-      where: {
-        date: String(date),
-        status: "active",
-      },
+    let whereCondition: any = { status: "active" };
+
+    // 1. Como `date` es un varchar ("YYYY-MM-DD"), filtramos por el string exacto recibido
+    if (date) {
+      whereCondition.date = date as string;
+    }
+
+    // 4. Buscamos y traemos las relaciones de user y medico para que la UI tenga toda la info
+    const appointments = await appointmentRepository.find({
+      where: whereCondition,
       relations: {
+        user: true,
         medico: {
           specialty: true,
         },
@@ -100,46 +103,12 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
       },
     });
 
-     // Solo mostramos turnos que todavía no fueron reservados
-    const availableAppointments = appointments.filter(
-      (appointment) => appointment.user === null
-    );
+    console.log("Turnos encontrados:", appointments);
 
-    const availableSlots = availableAppointments.map((appointment) => ({
-      id: appointment.id,
-      time: appointment.time,
+    return res.status(200).json(appointments);
 
-      profesional:
-        appointment.medico?.name ??
-        "Profesional disponible",
-
-      especialidad:
-        appointment.medico?.specialty?.name ??
-        appointment.especialidad ??
-        "Sin especialidad",
-
-      centro: "Centro de Atención",
-
-      medicoId:
-        appointment.medico?.id ?? null,
-    }));
-
-    console.log(
-      `Turnos disponibles para ${date}:`,
-      availableSlots
-    );
-
-    return res.status(200).json(availableSlots);
   } catch (error: any) {
-    console.error(
-      "Error al obtener turnos disponibles:",
-      error
-    );
-
-    return res.status(500).json({
-      message: "Error al obtener turnos disponibles",
-      error: error.message,
-    });
+    return res.status(500).json({ message: "Error al obtener turnos disponibles", error: error.message });
   }
 };
 

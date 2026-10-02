@@ -17,7 +17,7 @@ export class Appointment {
   status: string;
 
   @ManyToOne(() => User, user => user.appointments, { nullable: true, onDelete: "SET NULL" })
-  user: User;
+  user: User  | null;
 
   @Column({ type: "varchar" })
   tipo: string;
