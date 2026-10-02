@@ -169,7 +169,7 @@ function AppointmentForm({ onAddAppointment }) {
       >
         {({ values, setFieldValue }) => (
           <Form>
-            <div className="w-full max-w-2xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
+            <div className="w-full max-w-4xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
           {/* Encabezado */}
           <div className="border-b border-[#edf1f5] px-6 py-7 sm:px-8">
             <div className="flex items-center gap-4">
@@ -315,7 +315,7 @@ function AppointmentForm({ onAddAppointment }) {
                 </div> 
               )}
               </div>
-               <div className="w-full max-w-4xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
+             
               {/* PASO 4: Fecha y Hora (Aparecen al elegir especialidad o práctica) */} 
               {/* SECCIÓN PRINCIPAL: Calendario a la izquierda y Tabla de turnos a la derecha */}
               {((values.tipo === "especialidad" && values.especialidad) || (values.tipo === "practica" && values.practica)) && (
@@ -483,7 +483,7 @@ const isSelected = values.date === formattedDate;
               )}
 
             </div>
-            </div>
+
           </Form>
         )}
       </Formik>
