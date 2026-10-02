@@ -16,7 +16,7 @@ export class Appointment {
   @Column({ type: "varchar", default: "active" })
   status: string;
 
-  @ManyToOne(() => User, user => user.appointments, { nullable: true })
+  @ManyToOne(() => User, user => user.appointments, { nullable: true, onDelete: "SET NULL" })
   user: User;
 
   @Column({ type: "varchar" })
