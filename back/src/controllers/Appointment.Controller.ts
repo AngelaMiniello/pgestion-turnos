@@ -143,7 +143,6 @@ export const seedAppointments = async () => {
         time: "10:00",
         status: "active",
         tipo: "Consulta", 
-        user: existingUser,
         especialidad: "Medicina General",
         practica: "Control general",
         medico: null 
