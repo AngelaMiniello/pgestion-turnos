@@ -138,9 +138,6 @@ export const seedAppointments = async () => {
       date: appointmentDate.toISOString().slice(0, 10),
       time: "10:00",
       status: "active",
-      tipo: "Consulta", 
-      especialidad: "Medicina General",
-      practica: "Control general",
     });
 
     await appointmentRepo.save(newAppointment);
