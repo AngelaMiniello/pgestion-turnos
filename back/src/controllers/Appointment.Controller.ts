@@ -47,7 +47,7 @@ export const getAppointmentByIdController = async (req: Request, res: Response) 
 export const createAppointmentController = async (req: Request, res: Response) => {
     try {
         const { date, time, tipo, especialidad, practica, medico, userId } = req.body;
-        
+
         const newAppointment = await createAppointmentService(
             date,
             time,
@@ -119,35 +119,39 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
 
 export const seedAppointments = async () => {
   const appointmentRepo = AppDataSource.getRepository(Appointment);
+  const userRepo = AppDataSource.getRepository(User);
+  
   const count = await appointmentRepo.count();
 
   if (count === 0) {
-    const today = new Date();
-    const especialidades = ["Medicina General", "Pediatría", "Cardiología"];
-    const horas = ["09:00", "10:00", "11:00", "15:00"];
+    // Buscamos un usuario existente para asignarle el turno (ya que user es obligatorio)
+    const existingUser = await userRepo.findOne({ where: {} });
 
+    if (!existingUser) {
+      console.log("⚠️ Necesitas al menos un usuario en la base de datos para crear turnos de prueba.");
+      return;
+    }
+
+    const today = new Date();
+    
     for (let i = 1; i <= 7; i++) {
       const appointmentDate = new Date();
       appointmentDate.setDate(today.getDate() + i);
 
-      // Creamos un par de turnos aleatorios por día para probar
-      for (let j = 0; j < 2; j++) {
-        const randomEsp = especialidades[Math.floor(Math.random() * especialidades.length)];
-        const randomHora = horas[Math.floor(Math.random() * horas.length)];
+      const newAppointment = appointmentRepo.create({
+        date: appointmentDate.toISOString().slice(0, 10),
+        time: "10:00",
+        status: "active",
+        tipo: "Consulta", 
+        user: existingUser,
+        especialidad: "Medicina General",
+        practica: "Control general",
+        medico: null 
+      });
 
-        const newAppointment = appointmentRepo.create({
-          date: appointmentDate.toISOString().slice(0, 10),
-          time: randomHora,
-          status: "active",
-          tipo: "Consulta",
-          especialidad: randomEsp,
-          practica: "Control general",
-        }as any);
-
-        await appointmentRepo.save(newAppointment);
-      }
+      await appointmentRepo.save(newAppointment);
     }
-    console.log("✅ Turnos de prueba dinámicos creados exitosamente.");
+    console.log("✅ Turnos de prueba creados exitosamente.");
   }
 };
 
@@ -161,7 +165,6 @@ export const getActiveDatesController = async (req: Request, res: Response) => {
       .createQueryBuilder("appointment")
       .select("appointment.date", "date")
       .where("appointment.status = :status", { status: "active" })
-      .andWhere("appointment.user IS NULL")
       .distinct(true)
       .getRawMany();
 
@@ -177,4 +180,3 @@ export const getActiveDatesController = async (req: Request, res: Response) => {
     });
   }
 };
-
