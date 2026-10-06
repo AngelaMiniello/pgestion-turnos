@@ -163,6 +163,7 @@ export const seedAppointments = async () => {
 
     // Cantidad de días para generar
     const DAYS_TO_GENERATE = 30;
+    const MAX_SLOTS_PER_DAY = 3;
 
     // Duración de cada turno
     const SLOT_DURATION = 30;
@@ -205,29 +206,28 @@ export const seedAppointments = async () => {
         // Generamos horarios cada 30 minutos
         let slotIndex = 0;
         let practiceIndex = 0;
+        let generatedSlots = 0;
 
         for (
           let minutes = startMinutes;
-          minutes < endMinutes;
-          minutes += SLOT_DURATION
+            minutes < endMinutes && generatedSlots < MAX_SLOTS_PER_DAY;
+            minutes += 90
         ) {
-  const time = minutesToTime(minutes);
+          const time = minutesToTime(minutes);
 
-  /*
-   * Cada tercer turno será de práctica,
-   * siempre que el médico tenga prácticas asociadas.
-   *
-   * Los demás serán turnos de especialidad.
-   */
-  const shouldBePractice =
-    doctor.practices.length > 0 &&
-    slotIndex % 3 === 2;
+          /*
+          * Cada tercer turno será de práctica,
+          * siempre que el médico tenga prácticas asociadas.
+          *
+          * Los demás serán turnos de especialidad.
+          */
+          const shouldBePractice = doctor.practices.length > 0 && slotIndex % 2 === 1;
 
-  if (shouldBePractice) {
-    /*
-     * Vamos rotando entre las prácticas que
-     * realmente realiza este médico.
-     */
+          if (shouldBePractice) {
+          /*
+          * Vamos rotando entre las prácticas que
+          * realmente realiza este médico.
+          */
     const practice =
       doctor.practices[
         practiceIndex % doctor.practices.length
@@ -276,6 +276,7 @@ export const seedAppointments = async () => {
   }
 
   slotIndex++;
+   generatedSlots++;
 }
       }
     }
