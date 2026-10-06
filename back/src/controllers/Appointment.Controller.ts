@@ -11,9 +11,8 @@ import {
     cancelAppointmentService
 } from "../services/Appointments.Service";
 import { Appointment } from "../entities/Appointments";
-import { User } from "../entities/User";
 import { AppDataSource } from "../config/data-source";
-import { Between } from "typeorm";
+import { Doctor } from "../entities/Doctor";
 
 export const getAllAppointmentsController = async (req: Request, res: Response) => {
      try {
@@ -111,36 +110,135 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
     return res.status(500).json({ message: "Error al obtener turnos disponibles", error: error.message });
   }
 };
-
 export const seedAppointments = async () => {
-  const appointmentRepo = AppDataSource.getRepository(Appointment);
-  const userRepo = AppDataSource.getRepository(User);
-  
-  const existingUser = await userRepo.findOne({ where: {} });
+  try {
+    const appointmentRepo = AppDataSource.getRepository(Appointment);
+    const doctorRepo = AppDataSource.getRepository(Doctor);
 
-  if (!existingUser) {
-    console.log("⚠️ Necesitas al menos un usuario en la base de datos.");
-    return;
-  }
-
-  const today = new Date();
-  
-  for (let i = 1; i <= 7; i++) {
-    const appointmentDate = new Date();
-    appointmentDate.setDate(today.getDate() + i);
-
-    const newAppointment = appointmentRepo.create({
-      date: appointmentDate.toISOString().slice(0, 10),
-      time: "10:00",
-      status: "active",
-      tipo: "Consulta", 
-      especialidad: "Medicina General",
-      practica: "Control general",
+    // Traemos médicos con especialidad, horarios y prácticas
+    const doctors = await doctorRepo.find({
+      relations: {
+        specialty: true,
+        schedules: true,
+        practices: true,
+      },
     });
 
-    await appointmentRepo.save(newAppointment);
+    if (doctors.length === 0) {
+      console.log("⚠️ No hay médicos cargados.");
+      return;
+    }
+
+    // Convierte "08:00" a minutos
+    const timeToMinutes = (time: string): number => {
+      const parts = time.split(":");
+
+      const hours = Number(parts[0] ?? 0);
+      const minutes = Number(parts[1] ?? 0);
+
+      return hours * 60 + minutes;
+    };
+
+    // Convierte minutos a "HH:mm"
+    const minutesToTime = (totalMinutes: number): string => {
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+
+      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+        2,
+        "0"
+      )}`;
+    };
+
+    // Formatea fecha local como YYYY-MM-DD
+    const formatDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    };
+
+    // Cantidad de días para generar
+    const DAYS_TO_GENERATE = 30;
+
+    // Duración de cada turno
+    const SLOT_DURATION = 30;
+
+    const appointmentsToCreate: Appointment[] = [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Recorremos los próximos 30 días
+    for (
+      let dayOffset = 1;
+      dayOffset <= DAYS_TO_GENERATE;
+      dayOffset++
+    ) {
+      const appointmentDate = new Date(today);
+
+      appointmentDate.setDate(today.getDate() + dayOffset);
+
+      // 0 domingo, 1 lunes, ..., 6 sábado
+      const dayOfWeek = appointmentDate.getDay();
+
+      const formattedDate = formatDate(appointmentDate);
+
+      // Recorremos todos los médicos
+      for (const doctor of doctors) {
+        // Buscamos el horario del médico para ese día
+        const schedule = doctor.schedules.find(
+          (schedule) => schedule.dayOfWeek === dayOfWeek
+        );
+
+        // Si el médico no trabaja ese día, continuamos
+        if (!schedule) {
+          continue;
+        }
+
+        const startMinutes = timeToMinutes(schedule.startTime);
+        const endMinutes = timeToMinutes(schedule.endTime);
+
+        // Generamos horarios cada 30 minutos
+        for (
+          let minutes = startMinutes;
+          minutes < endMinutes;
+          minutes += SLOT_DURATION
+        ) {
+          const time = minutesToTime(minutes);
+
+          const appointment = appointmentRepo.create({
+            date: formattedDate,
+            time,
+            status: "active",
+            tipo: "especialidad",
+
+            especialidad: doctor.specialty?.name ?? null,
+
+            practica: null,
+
+            medico: doctor,
+
+            user: null,
+          });
+
+          appointmentsToCreate.push(appointment);
+        }
+      }
+    }
+
+    // Guardamos todos los turnos
+    await appointmentRepo.save(appointmentsToCreate);
+
+    console.log( `✅ ${appointmentsToCreate.length} turnos disponibles creados.` );
+    console.log( `📅 Disponibilidad generada para los próximos ${DAYS_TO_GENERATE} días.` );
+    console.log(  `⏱️ Duración de cada turno: ${SLOT_DURATION} minutos.` );
+    console.log(  `👨‍⚕️ Médicos utilizados: ${doctors.length}.` );
+  } catch (error) {
+    console.error("❌ Error creando los turnos:", error);
+    throw error;
   }
-  console.log("✅ Turnos de prueba creados exitosamente.");
 };
 
 // Controlador para obtener solo las fechas que tienen turnos activos
