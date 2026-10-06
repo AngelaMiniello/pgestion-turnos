@@ -201,30 +201,80 @@ export const seedAppointments = async () => {
         const endMinutes = timeToMinutes(schedule.endTime);
 
         // Generamos horarios cada 30 minutos
+        let slotIndex = 0;
+        let practiceIndex = 0;
+
         for (
           let minutes = startMinutes;
           minutes < endMinutes;
           minutes += SLOT_DURATION
         ) {
-          const time = minutesToTime(minutes);
+  const time = minutesToTime(minutes);
 
-          const appointment = appointmentRepo.create({
-            date: formattedDate,
-            time,
-            status: "active",
-            tipo: "especialidad",
+  /*
+   * Cada tercer turno será de práctica,
+   * siempre que el médico tenga prácticas asociadas.
+   *
+   * Los demás serán turnos de especialidad.
+   */
+  const shouldBePractice =
+    doctor.practices.length > 0 &&
+    slotIndex % 3 === 2;
 
-            especialidad: doctor.specialty?.name ?? null,
+  if (shouldBePractice) {
+    /*
+     * Vamos rotando entre las prácticas que
+     * realmente realiza este médico.
+     */
+    const practice =
+      doctor.practices[
+        practiceIndex % doctor.practices.length
+      ];
 
-            practica: null,
+    if (practice) {
+      const appointment = appointmentRepo.create({
+        date: formattedDate,
+        time,
+        status: "active",
 
-            medico: doctor,
+        tipo: "practica",
 
-            user: null,
-          });
+        especialidad: null,
 
-          appointmentsToCreate.push(appointment);
-        }
+        practica: practice.name,
+
+        medico: doctor,
+
+        user: null,
+      });
+
+      appointmentsToCreate.push(appointment);
+
+      practiceIndex++;
+    }
+  } else {
+    const appointment = appointmentRepo.create({
+      date: formattedDate,
+      time,
+      status: "active",
+
+      tipo: "especialidad",
+
+      especialidad:
+        doctor.specialty?.name ?? null,
+
+      practica: null,
+
+      medico: doctor,
+
+      user: null,
+    });
+
+    appointmentsToCreate.push(appointment);
+  }
+
+  slotIndex++;
+}
       }
     }
 
