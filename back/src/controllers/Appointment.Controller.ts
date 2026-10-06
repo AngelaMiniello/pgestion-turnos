@@ -110,8 +110,10 @@ export const getAvailableAppointmentsController = async (req: Request, res: Resp
     return res.status(500).json({ message: "Error al obtener turnos disponibles", error: error.message });
   }
 };
+
 export const seedAppointments = async () => {
   try {
+    console.log("🚨 SEED APPOINTMENTS EJECUTADO");
     const appointmentRepo = AppDataSource.getRepository(Appointment);
     const doctorRepo = AppDataSource.getRepository(Doctor);
 
