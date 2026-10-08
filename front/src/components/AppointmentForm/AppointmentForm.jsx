@@ -14,7 +14,7 @@ const initialState = {
   appointmentId: "",
 };
 
-function ActiveDatesUpdater({ values, setActiveDates }) {
+function ActiveDatesUpdater({ values, setActiveDates, setLoadingDates }) {
   useEffect(() => {
     const hasSelection =
       (values.tipo === "especialidad" && values.especialidad) ||
@@ -22,6 +22,7 @@ function ActiveDatesUpdater({ values, setActiveDates }) {
 
     if (!hasSelection) {
       setActiveDates([]);
+      setLoadingDates(false);
       return;
     }
 
@@ -31,21 +32,21 @@ function ActiveDatesUpdater({ values, setActiveDates }) {
       import.meta.env.VITE_API_URL ||
       "http://localhost:3000";
 
+    setLoadingDates(true);
+    setActiveDates([]);
+
     axios
       .get(`${API_URL}/appointments/active-dates`, {
         params: {
           tipo: values.tipo,
-
           especialidad:
             values.tipo === "especialidad"
               ? values.especialidad
               : undefined,
-
           practica:
             values.tipo === "practica"
               ? values.practica
               : undefined,
-
           medico: values.medico || undefined,
         },
         signal: controller.signal,
@@ -55,8 +56,13 @@ function ActiveDatesUpdater({ values, setActiveDates }) {
       })
       .catch(error => {
         if (error.code !== "ERR_CANCELED") {
-          console.error("Error al cargar fechas activas", error);
+          console.error("Error al cargar fechas:", error);
           setActiveDates([]);
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoadingDates(false);
         }
       });
 
@@ -67,6 +73,7 @@ function ActiveDatesUpdater({ values, setActiveDates }) {
     values.practica,
     values.medico,
     setActiveDates,
+    setLoadingDates,
   ]);
 
   return null;
@@ -82,6 +89,7 @@ function AppointmentForm({ onAddAppointment }) {
   const [availableSlots, setAvailableSlots] = useState([]);
   const [activeDates, setActiveDates] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [loadingDates, setLoadingDates] = useState(false);
 
   // Calendar navigation
   const handlePrevMonth = () => {
@@ -264,12 +272,16 @@ function AppointmentForm({ onAddAppointment }) {
       >
         {({ values, setFieldValue }) => (
           <Form>
-             <ActiveDatesUpdater
-               values={values}
+
+            <ActiveDatesUpdater
+              values={values}
               setActiveDates={setActiveDates}
-      />
+              setLoadingDates={setLoadingDates}
+            />
+
             <div className="w-full min-w-2xl max-w-3xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
-          {/* Encabezado */}
+
+              {/* Encabezado */}
           <div className="border-b border-[#edf1f5] px-6 py-7 sm:px-8">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#e8f2ff] text-[#004aad]">
@@ -505,8 +517,8 @@ function AppointmentForm({ onAddAppointment }) {
                               );
                           }
 
-            return daysMarkup;
-          })()}
+                          return daysMarkup;
+                        })()}
         </div>
       </div>
                       
@@ -570,7 +582,15 @@ function AppointmentForm({ onAddAppointment }) {
                           ) : (
                             <tr>
                               <td colSpan="4" className="p-8 text-center text-slate-400">
-                                {values.date ? "No hay turnos disponibles para esta fecha." : "Hacé clic en un día del calendario para ver los turnos disponibles."}
+                                {loadingDates
+                                  ? "Buscando turnos disponibles..."
+                                    : activeDates.length === 0
+                                    ? values.tipo === "practica"
+                                      ? `No hay turnos disponibles por el momento para ${values.practica}.`
+                                      : `No hay turnos disponibles por el momento para ${values.especialidad}.`
+                                        : values.date
+                                          ? "No hay turnos disponibles para esta fecha."
+                                          : "Hacé clic en un día del calendario para ver los turnos disponibles."}
                               </td>
                             </tr>
                           )}
