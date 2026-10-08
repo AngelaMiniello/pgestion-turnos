@@ -10,7 +10,8 @@ const initialState = {
   practica: "",
   medico: "",
   date: "",
-  time: ""
+  time: "",
+  appointmentId: "",
 };
 
 function AppointmentForm({ onAddAppointment }) {
@@ -76,16 +77,25 @@ function AppointmentForm({ onAddAppointment }) {
   const handleDateSelection = async (selectedDate, setFieldValue, values) => {
     setFieldValue("date", selectedDate);
     setFieldValue("time", ""); // Reseteamos la hora elegida previamente
-
+    setFieldValue("appointmentId", "");
+    
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/appointments/available`,
         {
           params: {
             date: selectedDate,
-            especialidad: values.especialidad,
-            practica: values.practica,
-            medico: values.medico
+            tipo: values.tipo,
+            especialidad:
+            values.tipo === "especialidad"
+              ? values.especialidad
+              : undefined,
+          practica:
+            values.tipo === "practica"
+              ? values.practica
+              : undefined,
+          medico:
+            values.medico || undefined,
           }
         }
       );
@@ -99,28 +109,51 @@ function AppointmentForm({ onAddAppointment }) {
     }
   };
     
-  const handleSubmit = async (values) => {
-    const user = JSON.parse(localStorage.getItem("user"));
+  const handleSubmit = async (values,  { resetForm }) => {
+    const user = JSON.parse( localStorage.getItem("user"));
 
     if (!user) {
-      alert("Tenés que iniciar sesión para solicitar un turno");
+      alert( "Tenés que iniciar sesión para solicitar un turno");
+      return;
+    }
+
+    if (!values.appointmentId) {
+      alert("Seleccioná un turno disponible");
       return;
     }
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/appointments`,
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+      const response = await axios.put(`${API_URL}/appointments/${values.appointmentId}/reserve`,
         {
-          ...values,
           userId: user.id,
         }
       );
 
-      alert("Turno solicitado con éxito");
-      if (onAddAppointment) onAddAppointment(response.data);
+      alert("Turno reservado con éxito");
+      resetForm();
+
+      if (onAddAppointment) {
+        onAddAppointment(response.data);
+      }
+      
+      setAvailableSlots(prev =>
+        prev.filter(slot => slot.id !== Number(values.appointmentId))
+      );
+
     } catch (error) {
-      console.error(error);
-      alert("No se pudo solicitar el turno. Intentá nuevamente.");
+      console.error(
+        "Error al reservar turno:",
+        error
+      );
+
+      if (error.response?.status === 409) {
+        alert( "Ese turno acaba de ser reservado. Elegí otro horario." );
+        return;
+      }
+
+      alert( "No se pudo reservar el turno. Intentá nuevamente." );
     }
   };
 
@@ -128,28 +161,41 @@ function AppointmentForm({ onAddAppointment }) {
   const handleSpecialtySelect = (specialtyName, setFieldValue) => {
     setFieldValue("especialidad", specialtyName);
     setFieldValue("medico", ""); // Reseteamos el médico seleccionado
+    setFieldValue("date", "");
+    setFieldValue("time", "");
+    setFieldValue("appointmentId", "");
+
+    setAvailableSlots([]);
 
     // Filtramos los médicos que coincidan con la especialidad seleccionada
     const filtered = doctors.filter(doc => doc.specialty?.name === specialtyName);
+
     setFilteredDoctors(filtered);
   };
 
-  const handlePracticeSelect = (practiceId, setFieldValue) => {
-  setFieldValue("practica", practiceId);
-  setFieldValue("medico", ""); 
+  const handlePracticeSelect = (practiceName, setFieldValue) => {
+  setFieldValue("practica", practiceName);
+  setFieldValue("medico", "");
+  setFieldValue("date", "");
+  setFieldValue("time", "");
+  setFieldValue("appointmentId", "");
 
-  if (!practiceId) {
-    setFilteredDoctors(doctors); // Si deselecciona, mostramos todos de nuevo
+  setAvailableSlots([]);
+
+  if (!practiceName) {
+    setFilteredDoctors(doctors);
     return;
   }
 
-  const filtered = doctors.filter(doc => {
-    // Verificamos si el doctor tiene esa práctica en su array (puede venir como ID directo o como objeto .id)
-    return doc.practices?.some(p => (typeof p === 'object' ? p.id : p) === Number(practiceId));
-  });
+  const filtered = doctors.filter(doc =>
+    doc.practices?.some(
+      practice => practice.name === practiceName
+    )
+  );
 
   setFilteredDoctors(filtered);
-};
+  
+  };
 
   const fieldClass = `
     box-border w-full rounded-xl
@@ -209,9 +255,12 @@ function AppointmentForm({ onAddAppointment }) {
                     setFieldValue("tipo", e.target.value);
                     setFieldValue("especialidad", "");
                     setFieldValue("practica", "");
+                    setFieldValue("medico", "");  //limpia el profesional que había elegido antes
+                    setFieldValue("appointmentId", ""); //limpia el turno seleccionado anteriormente
                     setFieldValue("date", "");
                     setFieldValue("time", "");
                     setAvailableSlots([]);
+                    setFilteredDoctors(doctors);
                   }}
                 > 
                   <option value="">Seleccioná una opción</option> 
@@ -266,14 +315,14 @@ function AppointmentForm({ onAddAppointment }) {
                   <div className="relative"> 
                     <Field 
                       as="select" 
-                      id="practice" 
-                      name="practice" 
+                      id="practica" 
+                      name="practica" 
                       className={`${fieldClass} cursor-pointer h-12 py-0 appearance-none pr-12`}
                       onChange={(e) => handlePracticeSelect(e.target.value, setFieldValue)}
                     > 
                       <option value="">Seleccioná una práctica</option> 
                       {practices.map((prac) => ( 
-                        <option value={prac.id} key={prac.id}>{prac.name}</option> 
+                        <option value={prac.name} key={prac.id}>{prac.name}</option> 
                       ))} 
                     </Field> 
 
@@ -336,13 +385,13 @@ function AppointmentForm({ onAddAppointment }) {
                           >
                           <ChevronLeft size={16}/>
                           </button>
-                           <button 
-              type="button" 
-              onClick={handleNextMonth} 
-              className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600! transition-all"
-            >
-              <ChevronRight size={16}/>
-            </button>
+                          <button 
+                            type="button" 
+                            onClick={handleNextMonth} 
+                            className="p-1.5 rounded-lg border bg-white hover:bg-slate-100 text-slate-600! transition-all"
+                          >
+                            <ChevronRight size={16}/>
+                          </button>
                         </div>
                       </div>
 
@@ -354,32 +403,32 @@ function AppointmentForm({ onAddAppointment }) {
                       {/* Días del mes (Generados dinámicamente) */}
                       <div className="grid grid-cols-7 gap-1 text-center text-sm">
                         {(() => {
-            const year = currentMonth.getFullYear();
-            const month = currentMonth.getMonth();
-            const firstDayIndex = new Date(year, month, 1).getDay();
-            const totalDays = new Date(year, month + 1, 0).getDate();
+                          const year = currentMonth.getFullYear();
+                          const month = currentMonth.getMonth();
+                          const firstDayIndex = new Date(year, month, 1).getDay();
+                          const totalDays = new Date(year, month + 1, 0).getDate();
             
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
 
-             const daysMarkup = [];
+                          const daysMarkup = [];
 
-            // Espacios vacíos para alinear el primer día de la semana
-            for (let i = 0; i < firstDayIndex; i++) {
-              daysMarkup.push(<div key={`empty-${i}`} className="h-9 w-9" />);
-            }
+                          // Espacios vacíos para alinear el primer día de la semana
+                          for (let i = 0; i < firstDayIndex; i++) {
+                            daysMarkup.push(<div key={`empty-${i}`} className="h-9 w-9" />);
+                          }
 
-            // Renderizado de los días
-            for (let dayNum = 1; dayNum <= totalDays; dayNum++) {
-              const dateObj = new Date(year, month, dayNum);
-              const yyyy = year;
-              const mm = String(month + 1).padStart(2, '0');
-              const dd = String(dayNum).padStart(2, '0');
-              const formattedDate = `${yyyy}-${mm}-${dd}`;
-const isSelected = values.date === formattedDate;
-                          const hasActiveTurn = activeDates.includes(formattedDate);
- const isPast = dateObj < today;
- daysMarkup.push(
+                          // Renderizado de los días
+                          for (let dayNum = 1; dayNum <= totalDays; dayNum++) {
+                            const dateObj = new Date(year, month, dayNum);
+                            const yyyy = year;
+                            const mm = String(month + 1).padStart(2, '0');
+                            const dd = String(dayNum).padStart(2, '0');
+                            const formattedDate = `${yyyy}-${mm}-${dd}`;
+                            const isSelected = values.date === formattedDate;
+                            const hasActiveTurn = activeDates.includes(formattedDate);
+                            const isPast = dateObj < today;
+                            daysMarkup.push(
                 <button
                   key={formattedDate}
                   type="button"
@@ -425,14 +474,15 @@ const isSelected = values.date === formattedDate;
                         <thead>
                           <tr className="bg-slate-100 text-slate-600 text-xs border-b border-slate-200">
                             <th className="p-3 font-semibold">Hora</th>
-                            <th className="p-3 font-semibold">Profesional</th>
-                            <th className="p-3 font-semibold">Especialidad</th>
+                            <th className="p-3 font-semibold">
+                              {values.tipo === "practica" ? "Práctica" : "Especialidad"}
+                            </th>
                           </tr>
                         </thead>
                         <tbody className="text-xs text-slate-700 divide-y divide-slate-100">
                           {values.date && availableSlots.length > 0 ? (
                             availableSlots.map((slot, index) => {
-                              const isSlotSelected = values.time === slot.time;
+                              const isSlotSelected = values.appointmentId === slot.id;
                               const profesional =
     slot.medico?.name || "Profesional no asignado";
 
@@ -444,15 +494,21 @@ const isSelected = values.date === formattedDate;
                               return (
                                 <tr 
                                   key={slot.id ?? `${slot.time}-${index}`} 
-                                  onClick={() => setFieldValue("time", slot.time)}
+                                  onClick={() => {
+                                    setFieldValue("time", slot.time);
+                                    setFieldValue("appointmentId", slot.id);
+                                  }}
                                   className={`cursor-pointer transition-colors ${isSlotSelected ? 'bg-blue-50 font-bold text-[#004aad]' : 'hover:bg-slate-50'}`}
                                 >
                                   <td className="p-3 flex items-center gap-1.5">
                                     <Clock3 size={14} className="text-[#004aad]" />
                                     {slot.time}
                                   </td>
-                                  <td className="p-3"> {profesional  || "Profesional no disponible" }</td>
-                                  <td className="p-3">{especialidad || "Especialidad no disponible" }</td>
+                                  <td className="p-3">
+                                    {slot.tipo === "practica"
+                                      ? slot.practica
+                                      : slot.especialidad || slot.medico?.specialty?.name}
+                                  </td>
                                 </tr>
                               );
                             })
