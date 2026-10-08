@@ -76,16 +76,13 @@ export const cancelAppointmentController = async (req: Request, res: Response) =
     }
 };
 
-// Controlador para buscar turnos disponibles por fecha, especialidad y médico
-export const getAvailableAppointmentsController = async ( req: Request, res: Response ) => {
+// Controlador para buscar turnos disponibles
+export const getAvailableAppointmentsController = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const {
-      date,
-      tipo,
-      especialidad,
-      practica,
-      medico,
-    } = req.query;
+    const { date, tipo, especialidad, practica, medico } = req.query;
 
     const appointmentRepository =
       AppDataSource.getRepository(Appointment);
@@ -109,7 +106,7 @@ export const getAvailableAppointmentsController = async ( req: Request, res: Res
       );
     }
 
-    // TIPO: especialidad o practica
+    // TIPO
     if (tipo) {
       queryBuilder.andWhere(
         "appointment.tipo = :tipo",
@@ -143,6 +140,39 @@ export const getAvailableAppointmentsController = async ( req: Request, res: Res
       );
     }
 
+    // FECHA Y HORA ACTUAL DE ARGENTINA
+    const now = new Date();
+
+    const argentinaDate = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Argentina/Buenos_Aires",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(now);
+
+    const argentinaTime = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "America/Argentina/Buenos_Aires",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).format(now);
+
+    // EXCLUIR TURNOS VENCIDOS
+    queryBuilder.andWhere(
+      `(
+        appointment.date > :today
+        OR (
+          appointment.date = :today
+          AND appointment.time > :currentTime
+        )
+      )`,
+      {
+        today: argentinaDate,
+        currentTime: argentinaTime,
+      }
+    );
+
+    // EJECUTAR CONSULTA DESPUÉS DE TODOS LOS FILTROS
     const appointments = await queryBuilder
       .orderBy("appointment.time", "ASC")
       .getMany();
@@ -346,38 +376,107 @@ export const seedAppointments = async () => {
   }
 };
 
-// Controlador para obtener solo las fechas que tienen turnos activos
-export const getActiveDatesController = async (req: Request, res: Response) => {
+export const getActiveDatesController = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const { especialidad, practica, medico } = req.query;
-    const appointmentRepository = AppDataSource.getRepository(Appointment);
+    const { tipo, especialidad, practica, medico } = req.query;
 
-    // Usamos QueryBuilder de TypeORM para buscar fechas únicas de turnos activos
-    const queryBuilder = await appointmentRepository
+    const appointmentRepository =
+      AppDataSource.getRepository(Appointment);
+
+    const queryBuilder = appointmentRepository
       .createQueryBuilder("appointment")
       .select("appointment.date", "date")
-      .where("appointment.status = :status", { status: "active" })
-      .andWhere("appointment.userId IS NULL")
+      .where("appointment.status = :status", {
+        status: "active",
+      })
+      .andWhere("appointment.userId IS NULL");
 
-    // Aplicar filtros dinámicos si el frontend los envía
+    // TIPO
+    if (tipo) {
+      queryBuilder.andWhere(
+        "appointment.tipo = :tipo",
+        { tipo }
+      );
+    }
+
+    // ESPECIALIDAD
     if (especialidad) {
-      queryBuilder.andWhere("appointment.especialidad = :especialidad", { especialidad });
-    }
-    if (practica) {
-      queryBuilder.andWhere("appointment.practica = :practica", { practica });
-    }
-    if (medico) {
-      queryBuilder.andWhere("appointment.medico = :medico", { medico });
+      queryBuilder.andWhere(
+        "appointment.especialidad = :especialidad",
+        { especialidad }
+      );
     }
 
-    const results = await queryBuilder.distinct(true).getRawMany();
-    const dates = results.map((item) => item.date);
+    // PRÁCTICA
+    if (practica) {
+      queryBuilder.andWhere(
+        "appointment.practica = :practica",
+        { practica }
+      );
+    }
+
+    // MÉDICO
+    if (medico) {
+      queryBuilder.andWhere(
+        "appointment.medicoId = :medicoId",
+        { medicoId: Number(medico) }
+      );
+    }
+
+    // FECHA Y HORA ACTUAL DE ARGENTINA
+    const now = new Date();
+
+    const argentinaDate = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Argentina/Buenos_Aires",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(now);
+
+    const argentinaTime = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "America/Argentina/Buenos_Aires",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).format(now);
+
+    // EXCLUIR TURNOS VENCIDOS
+    queryBuilder.andWhere(
+      `(
+        appointment.date > :today
+        OR (
+          appointment.date = :today
+          AND appointment.time > :currentTime
+        )
+      )`,
+      {
+        today: argentinaDate,
+        currentTime: argentinaTime,
+      }
+    );
+
+    // OBTENER FECHAS ÚNICAS
+    const results = await queryBuilder
+      .distinct(true)
+      .orderBy("appointment.date", "ASC")
+      .getRawMany();
+
+    const dates = results.map(item => item.date);
 
     return res.status(200).json(dates);
+
   } catch (error: any) {
-    return res.status(500).json({ 
-      message: "Error al obtener fechas disponibles", 
-      error: error.message 
+    console.error(
+      "Error al obtener fechas disponibles:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Error al obtener fechas disponibles",
+      error: error.message,
     });
   }
 };
