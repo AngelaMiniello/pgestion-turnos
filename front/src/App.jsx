@@ -11,6 +11,7 @@ import Footer from "./components/Footer/Footer";
 import Coberturas from "./views/Coberturas/Coberturas";
 import UserProfile from "./views/UserProfile/UserProfile";
 import ScheduleAppointment from "./views/ScheduleAppointment/ScheduleAppointment";
+import ServiceDetail from "./views/ServiceDetail/ServiceDetail";
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
         <Route path="/coberturas" element={<Coberturas/>}/>
         <Route path="/profile" element={<UserProfile/>}/>
         <Route path="/appointments/schedule" element={<ScheduleAppointment />} />
+        <Route path="/servicios/:slug" element={<ServiceDetail />}/>
       </Routes>
 
       <Footer/>

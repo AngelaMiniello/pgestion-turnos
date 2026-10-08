@@ -1,63 +1,6 @@
-import {
-  HeartPulse,
-  Stethoscope,
-  ScanLine,
-  Activity,
-  Baby,
-  Brain,
-  ChevronRight,
-} from "lucide-react";
-
-const services = [
-  {
-    id: 1,
-    title: "Consultorios Externos",
-    description:
-      "Ofrecemos atención en múltiples consultorios con tecnología moderna y equipos interdisciplinarios.",
-    icon: HeartPulse,
-    featured: false,
-  },
-  {
-    id: 2,
-    title: "Servicio de Guardia",
-    description:
-      "Disponible las 24 horas, todo el año, con atención médica en distintas especialidades.",
-    icon: Stethoscope,
-    featured: false,
-  },
-  {
-    id: 3,
-    title: "Diagnóstico por Imágenes",
-    description:
-      "Estudios con tecnología avanzada e informes confiables para una atención precisa.",
-    icon: ScanLine,
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "Servicio de Internación",
-    description:
-      "Cuidamos y acompañamos a quienes necesitan seguimiento cercano por enfermedad o cirugía.",
-    icon: Activity,
-    featured: false,
-  },
-  {
-    id: 5,
-    title: "Unidad Materno Infantil",
-    description:
-      "Acompañamos a las familias con un enfoque humano y un equipo multidisciplinario.",
-    icon: Baby,
-    featured: false,
-  },
-  {
-    id: 6,
-    title: "Medicina Nuclear",
-    description:
-      "Realizamos diagnósticos y tratamientos especializados con foco en el bienestar del paciente.",
-    icon: Brain,
-    featured: false,
-  },
-];
+import {  HeartPulse,  Stethoscope,  ScanLine,  Activity,  Baby,  Brain,  ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { services } from "../../data/services.js";
 
 function ServicesSection() {
   return (
@@ -103,13 +46,13 @@ function ServicesSection() {
                   {service.description}
                 </p>
 
-                <a
-                  href="#"
+                <Link
+                  to={`/servicios/${service.slug}`}
                   className="mt-10 inline-flex items-center gap-2 text-lg font-semibold text-[#163f9f] transition hover:gap-3"
                 >
                   Ver más
                   <ChevronRight className="h-5 w-5" />
-                </a>
+                </Link>
               </article>
             );
           })}

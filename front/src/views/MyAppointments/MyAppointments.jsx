@@ -113,8 +113,8 @@ function MyAppointments() {
           >
             <X size={18} />
           </button>
-  </div>
-)}
+          </div>
+        )}
 
         {/* Listado de Turnos */}
         <div className={styles.appointmentsContainer}>

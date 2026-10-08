@@ -2,10 +2,12 @@ import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { validateLogin } from "../../helpers/validateLogin";
 import { useNavigate } from "react-router-dom";
-import { Stethoscope, CircleUserRound, KeyRound, ArrowRight, ShieldCheck, } from "lucide-react";
+import { Stethoscope, CircleUserRound, KeyRound, ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 function Login() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const initialValues = {
     username: "",
@@ -139,27 +141,51 @@ function Login() {
                   </ErrorMessage> 
                 </div>
        
-                {/* Contraseña */} 
+                {/* Contraseña */}
                 <div className="flex flex-col gap-2.5">
-                  <label htmlFor="password" className="text-sm font-semibold text-[#1f3557]">
-                    Contraseña 
+                  <label
+                    htmlFor="password"
+                    className="text-sm font-semibold text-[#1f3557]"
+                  >
+                    Contraseña
                   </label>
 
-                  <div className="group relative"> 
-                    <KeyRound size={19} strokeWidth={1.8} 
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8a98aa] transition-colors duration-200 group-focus-within:text-[#004aad]" />
+  <div className="group relative">
+    <KeyRound
+      size={19}
+      strokeWidth={1.8}
+      className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8a98aa] transition-colors duration-200 group-focus-within:text-[#004aad]"
+    />
 
-                    <Field 
-                      id="password" 
-                      type="password" 
-                      name="password" 
-                      placeholder="Ingresá tu contraseña" 
-                      autoComplete="current-password" 
-                      className=" box-border w-full rounded-xl border border-[#dce3ec] bg-[#f9fbfd] py-3.5 pl-11 pr-4 text-sm text-[#1f3557] outline-none 
-                        transition-all duration-200 placeholder:text-[#a5afbd] hover:border-[#c8d5e5] focus:border-[#004aad] focus:bg-white focus:ring-4
-                       focus:ring-[#004aad]/10 " 
-                    /> 
-                  </div>
+    <Field
+      id="password"
+      type={showPassword ? "text" : "password"}
+      name="password"
+      placeholder="Ingresá tu contraseña"
+      autoComplete="current-password"
+      className="box-border w-full rounded-xl border border-[#dce3ec] bg-[#f9fbfd] py-3.5 pl-11 pr-12 text-sm text-[#1f3557] outline-none transition-all duration-200 placeholder:text-[#a5afbd] hover:border-[#c8d5e5] focus:border-[#004aad] focus:bg-white focus:ring-4 focus:ring-[#004aad]/10"
+    />
+
+    {/* Mostrar / ocultar contraseña */}
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      aria-label={
+        showPassword
+          ? "Ocultar contraseña"
+          : "Mostrar contraseña"
+      }
+      aria-pressed={showPassword}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8a98aa] transition-colors duration-200 hover:text-[#004aad] focus:outline-none focus-visible:text-[#004aad]"
+    >
+      {showPassword ? (
+        <EyeOff size={19} strokeWidth={1.8} />
+      ) : (
+        <Eye size={19} strokeWidth={1.8} />
+      )}
+    </button>
+  </div>
+</div>
 
                   <ErrorMessage name="password"> {(msg) => ( 
                     <p className="mt-2 text-xs font-medium text-[#a80b29]"> {msg} </p> )} 
