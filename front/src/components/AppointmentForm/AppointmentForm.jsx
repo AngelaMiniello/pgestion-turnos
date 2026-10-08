@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState, useEffect } from 'react';
-import {  CalendarDays,  Clock3,  ClipboardPlus,  Check,  ChevronDown, ChevronRight, ChevronLeft, Stethoscope, Activity, UserCheck } from "lucide-react";
+import { Clock3,  ClipboardPlus,  Check,  ChevronDown, ChevronRight, ChevronLeft, Stethoscope, Activity, UserCheck, CheckCircle2, AlertCircle, X } from "lucide-react";
 import validateAppointment from "../../helpers/validateAppintment";
 
 const initialState = {
@@ -90,6 +90,7 @@ function AppointmentForm({ onAddAppointment }) {
   const [activeDates, setActiveDates] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [loadingDates, setLoadingDates] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   // Calendar navigation
   const handlePrevMonth = () => {
@@ -130,6 +131,16 @@ function AppointmentForm({ onAddAppointment }) {
       .catch(error => console.error("Error cargando prácticas", error));
   }, []);
   
+  useEffect(() => {
+    if (!notification) return;
+
+    const timeout = setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, [notification]);
+
   // Función que se dispara al hacer clic en un día del calendario
   const handleDateSelection = async (selectedDate, setFieldValue, values) => {
     setFieldValue("date", selectedDate);
@@ -166,53 +177,70 @@ function AppointmentForm({ onAddAppointment }) {
     }
   };
     
-  const handleSubmit = async (values,  { resetForm }) => {
-    const user = JSON.parse( localStorage.getItem("user"));
+  const handleSubmit = async (values, { resetForm }) => {
+  setNotification(null);
 
-    if (!user) {
-      alert( "Tenés que iniciar sesión para solicitar un turno");
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    setNotification({
+      type: "error",
+      message: "Tenés que iniciar sesión para solicitar un turno.",
+    });
+    return;
+  }
+
+  if (!values.appointmentId) {
+    setNotification({
+      type: "error",
+      message: "Seleccioná un turno disponible.",
+    });
+    return;
+  }
+
+  try {
+    const API_URL =
+      import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+    const response = await axios.put(
+      `${API_URL}/appointments/${values.appointmentId}/reserve`,
+      {
+        userId: user.id,
+      }
+    );
+
+    setAvailableSlots(prev =>
+      prev.filter(slot => slot.id !== Number(values.appointmentId))
+    );
+
+    resetForm();
+
+    setNotification({
+      type: "success",
+      message: "¡Turno reservado correctamente! Podés verlo en Mis Turnos.",
+    });
+
+    if (onAddAppointment) {
+      onAddAppointment(response.data);
+    }
+
+  } catch (error) {
+    console.error("Error al reservar turno:", error);
+
+    if (error.response?.status === 409) {
+      setNotification({
+        type: "error",
+        message: "Ese turno ya fue reservado. Elegí otro horario.",
+      });
       return;
     }
 
-    if (!values.appointmentId) {
-      alert("Seleccioná un turno disponible");
-      return;
-    }
-
-    try {
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-
-      const response = await axios.put(`${API_URL}/appointments/${values.appointmentId}/reserve`,
-        {
-          userId: user.id,
-        }
-      );
-
-      alert("Turno reservado con éxito");
-      resetForm();
-
-      if (onAddAppointment) {
-        onAddAppointment(response.data);
-      }
-      
-      setAvailableSlots(prev =>
-        prev.filter(slot => slot.id !== Number(values.appointmentId))
-      );
-
-    } catch (error) {
-      console.error(
-        "Error al reservar turno:",
-        error
-      );
-
-      if (error.response?.status === 409) {
-        alert( "Ese turno acaba de ser reservado. Elegí otro horario." );
-        return;
-      }
-
-      alert( "No se pudo reservar el turno. Intentá nuevamente." );
-    }
-  };
+    setNotification({
+      type: "error",
+      message: "No se pudo reservar el turno. Intentá nuevamente.",
+    });
+  }
+};
 
   // Filtrar médicos dinámicamente cuando el usuario selecciona una especialidad
   const handleSpecialtySelect = (specialtyName, setFieldValue) => {
@@ -280,6 +308,39 @@ function AppointmentForm({ onAddAppointment }) {
             />
 
             <div className="w-full min-w-2xl max-w-3xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
+
+              {notification && (
+  <div
+    role="status"
+    aria-live="polite"
+    className={`mx-6 mt-5 flex items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
+      notification.type === "success"
+        ? "border-green-200 bg-green-50 text-green-800"
+        : "border-red-200 bg-red-50 text-red-800"
+    }`}
+  >
+    <div className="flex items-center gap-3">
+      {notification.type === "success" ? (
+        <CheckCircle2 size={21} className="shrink-0" />
+      ) : (
+        <AlertCircle size={21} className="shrink-0" />
+      )}
+
+      <p className="text-sm font-semibold">
+        {notification.message}
+      </p>
+    </div>
+
+    <button
+      type="button"
+      onClick={() => setNotification(null)}
+      aria-label="Cerrar notificación"
+      className="rounded-lg p-1 transition hover:bg-black/5"
+    >
+      <X size={18} />
+    </button>
+  </div>
+)}
 
               {/* Encabezado */}
           <div className="border-b border-[#edf1f5] px-6 py-7 sm:px-8">

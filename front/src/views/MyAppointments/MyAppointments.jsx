@@ -87,7 +87,7 @@ function MyAppointments() {
         {notification && (
           <div
             role="status"
-            className={`mb-6 flex items-center justify-between gap-3 rounded-xl border px-4 py-3 shadow-sm ${
+            className={`mb-8 mt-8 flex items-center justify-between gap-3 rounded-xl border px-4 py-3 shadow-sm ${
               notification.type === "success"
                 ? "border-green-200 bg-green-50 text-green-800"
                 : "border-red-200 bg-red-50 text-red-800"
@@ -105,14 +105,14 @@ function MyAppointments() {
             </p>
           </div>
 
-    <button
-      type="button"
-      onClick={() => setNotification(null)}
-      className="rounded-lg p-1 transition hover:bg-black/5"
-      aria-label="Cerrar notificación"
-    >
-      <X size={18} />
-    </button>
+          <button
+            type="button"
+            onClick={() => setNotification(null)}
+            className="rounded-lg p-1 transition hover:bg-black/5"
+            aria-label="Cerrar notificación"
+          >
+            <X size={18} />
+          </button>
   </div>
 )}
 
