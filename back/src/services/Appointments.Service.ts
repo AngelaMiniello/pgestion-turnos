@@ -76,17 +76,28 @@ export const createAppointmentService = async (
 };
 
 // Cancelar un turno
-export const cancelAppointmentService = async (id: number): Promise<Appointment | undefined> => {
-  //  Buscar turno
-  const appointment = await AppointmentRepository.findOne({ where: { id } });
+export const cancelAppointmentService = async (
+ id: number
+): Promise<Appointment | undefined> => {
+
+  const appointment = await AppointmentRepository.findOne({
+    where: { id },
+    relations: {
+      user: true,
+    },
+  });
 
   if (!appointment) {
     return undefined;
   }
 
-  //  Cambiar estado
-  appointment.status = "cancelled";
+  if (!appointment.user) {
+    throw new Error("Este turno no tiene una reserva activa");
+  }
 
-  //  Guardar cambios
+  // Liberar el horario para otro paciente
+  appointment.user = null;
+  appointment.status = "active";
+
   return await AppointmentRepository.save(appointment);
 };
