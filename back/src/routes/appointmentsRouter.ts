@@ -31,6 +31,6 @@ appointmentsRouter.post("/", createAppointmentController);
 appointmentsRouter.put("/cancel/:id", cancelAppointmentController);
 
 // PUT /appointments/:id/reserve va a crear la reserva del turno
-appointmentsRouter.put( "/appointments/:id/reserve", reserveAppointmentController);
+appointmentsRouter.put( "/:id/reserve", reserveAppointmentController);
 
 export default appointmentsRouter;

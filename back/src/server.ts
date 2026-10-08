@@ -5,6 +5,7 @@ import cors from "cors";
 import router from "./routes/indexRouter";
 import credentialRouter from "./routes/credentialsRouter";
 import doctorRouter from "./routes/doctor.router";
+import appointmentsRouter from "./routes/appointmentsRouter";
 
 const server = express();
 
@@ -27,5 +28,6 @@ server.use("/credentials", credentialRouter);
 
 // Si duplica las rutas de doctors, revisár su contenido.
 server.use("/doctors", doctorRouter);
+server.use("/appointments", appointmentsRouter);
 
 export default server;
