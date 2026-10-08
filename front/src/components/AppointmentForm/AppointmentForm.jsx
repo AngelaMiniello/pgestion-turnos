@@ -14,6 +14,64 @@ const initialState = {
   appointmentId: "",
 };
 
+function ActiveDatesUpdater({ values, setActiveDates }) {
+  useEffect(() => {
+    const hasSelection =
+      (values.tipo === "especialidad" && values.especialidad) ||
+      (values.tipo === "practica" && values.practica);
+
+    if (!hasSelection) {
+      setActiveDates([]);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const API_URL =
+      import.meta.env.VITE_API_URL ||
+      "http://localhost:3000";
+
+    axios
+      .get(`${API_URL}/appointments/active-dates`, {
+        params: {
+          tipo: values.tipo,
+
+          especialidad:
+            values.tipo === "especialidad"
+              ? values.especialidad
+              : undefined,
+
+          practica:
+            values.tipo === "practica"
+              ? values.practica
+              : undefined,
+
+          medico: values.medico || undefined,
+        },
+        signal: controller.signal,
+      })
+      .then(response => {
+        setActiveDates(response.data);
+      })
+      .catch(error => {
+        if (error.code !== "ERR_CANCELED") {
+          console.error("Error al cargar fechas activas", error);
+          setActiveDates([]);
+        }
+      });
+
+    return () => controller.abort();
+  }, [
+    values.tipo,
+    values.especialidad,
+    values.practica,
+    values.medico,
+    setActiveDates,
+  ]);
+
+  return null;
+}
+
 function AppointmentForm({ onAddAppointment }) {
   const [specialties, setSpecialties] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -41,15 +99,6 @@ function AppointmentForm({ onAddAppointment }) {
       return newDate;
     });
   };
-
-  useEffect(() => {
-  // Petición para traer las fechas con turnos disponibles
-  axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/appointments/active-dates`)
-    .then(response => {
-      setActiveDates(response.data); // Ej: ["2026-10-02", "2026-10-03"]
-    })
-    .catch(error => console.error("Error al cargar fechas activas", error));
-  }, []);
 
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -215,6 +264,10 @@ function AppointmentForm({ onAddAppointment }) {
       >
         {({ values, setFieldValue }) => (
           <Form>
+             <ActiveDatesUpdater
+               values={values}
+              setActiveDates={setActiveDates}
+      />
             <div className="w-full min-w-2xl max-w-3xl overflow-hidden rounded-3xl border border-[#e3e9f1] bg-white shadow-[0_20px_60px_rgba(0,55,120,0.08)]">
           {/* Encabezado */}
           <div className="border-b border-[#edf1f5] px-6 py-7 sm:px-8">
@@ -428,27 +481,29 @@ function AppointmentForm({ onAddAppointment }) {
                             const isSelected = values.date === formattedDate;
                             const hasActiveTurn = activeDates.includes(formattedDate);
                             const isPast = dateObj < today;
-                            daysMarkup.push(
-                <button
-                  key={formattedDate}
-                  type="button"
-                  disabled={isPast}
-                  onClick={() => handleDateSelection(formattedDate, setFieldValue, values)}
-                  className={`h-9 w-9 mx-auto rounded-xl flex items-center justify-center font-medium transition-all ${
-                    isSelected 
-                      ? 'bg-[#004aad] text-white shadow-md' 
-                      : isPast
-                        ? 'text-slate-200 cursor-not-allowed bg-transparent' // Días pasados atenuados
-                        : hasActiveTurn 
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-bold' // Tu verde original para días con turnos
-                          : 'text-slate-600 hover:bg-slate-200' // Días futuros normales
-                  }`}
-                >
-                  {dayNum}
-                </button>
+
+                              daysMarkup.push(
+
+                                <button
+                                  key={formattedDate}
+                                  type="button"
+                                  disabled={isPast || !hasActiveTurn}
+                                  onClick={() => handleDateSelection(formattedDate, setFieldValue, values)}
+                                  className={`h-9 w-9 mx-auto rounded-xl flex items-center justify-center font-medium transition-all ${
+                                    isSelected 
+                                      ? 'bg-[#004aad] text-white shadow-md' 
+                                      : isPast
+                                        ? 'text-slate-200 cursor-not-allowed bg-transparent' // Días pasados atenuados
+                                        : hasActiveTurn 
+                                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-bold' // Tu verde original para días con turnos
+                                          : 'text-slate-600 hover:bg-slate-200' // Días futuros normales
+                                  }`}
+                                >
+                                  {dayNum}
+                                </button>
    
-              );
-            }
+                              );
+                          }
 
             return daysMarkup;
           })()}
