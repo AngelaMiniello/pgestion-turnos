@@ -9,17 +9,17 @@ import {
 } from "lucide-react";
 
 const Appointment = ({ id, time, date, status, onCancel }) => {
+
   const handleCancel = async () => {
     try {
       await axios.put(
         `${import.meta.env.VITE_API_URL}/appointments/cancel/${id}`
       );
 
-      alert("Turno cancelado con éxito");
       onCancel(id);
     } catch (error) {
-      console.error(error);
-      alert("Error al cancelar el turno");
+      console.error("Error al cancelar el turno:", error);
+      onCancel(null, "error");
     }
   };
 

@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import styles from "./MyAppointments.module.css";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, CheckCircle2, AlertCircle, X, } from "lucide-react";
 
 function MyAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -33,15 +34,34 @@ function MyAppointments() {
     getAllAppointments(user.id);
   }, [navigate]);
 
-  const handleCancelAppointment = (id) => {
-    setAppointments(
-      appointments.map((appoint) => {
-        if (appoint.id === id) {
-          appoint.status = "cancelled";
-        }
-        return appoint;
-      })
+  useEffect(() => {
+    if (!notification) return;
+
+    const timeout = setTimeout(() => {
+      setNotification(null);
+    }, 4000);
+
+    return () => clearTimeout(timeout);
+  }, [notification]);
+
+  const handleCancelAppointment = (id, error = null) => {
+    if (error) {
+      setNotification({
+        type: "error",
+        message: "No se pudo cancelar el turno. Intentá nuevamente.",
+      });
+      return;
+    }
+
+    // Quitar el turno cancelado de la lista del paciente
+    setAppointments(prev =>
+      prev.filter(appointment => appointment.id !== id)
     );
+
+    setNotification({
+      type: "success",
+      message: "Turno cancelado correctamente.",
+    });
   };
 
   return (
@@ -63,6 +83,38 @@ function MyAppointments() {
             Nuevo Turno
           </Link>
         </div>
+
+        {notification && (
+          <div
+            role="status"
+            className={`mb-6 flex items-center justify-between gap-3 rounded-xl border px-4 py-3 shadow-sm ${
+              notification.type === "success"
+                ? "border-green-200 bg-green-50 text-green-800"
+                : "border-red-200 bg-red-50 text-red-800"
+            }`}
+          >
+          <div className="flex items-center gap-3">
+            {notification.type === "success" ? (
+              <CheckCircle2 size={21} />
+                ) : (
+              <AlertCircle size={21} />
+            )}
+
+            <p className="text-sm font-semibold">
+              {notification.message}
+            </p>
+          </div>
+
+    <button
+      type="button"
+      onClick={() => setNotification(null)}
+      className="rounded-lg p-1 transition hover:bg-black/5"
+      aria-label="Cerrar notificación"
+    >
+      <X size={18} />
+    </button>
+  </div>
+)}
 
         {/* Listado de Turnos */}
         <div className={styles.appointmentsContainer}>
