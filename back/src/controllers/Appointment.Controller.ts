@@ -13,6 +13,7 @@ import {
 import { Appointment } from "../entities/Appointments";
 import { AppDataSource } from "../config/data-source";
 import { Doctor } from "../entities/Doctor";
+import { User } from "../entities/User";
 
 export const getAllAppointmentsController = async (req: Request, res: Response) => {
      try {
@@ -76,38 +77,92 @@ export const cancelAppointmentController = async (req: Request, res: Response) =
 };
 
 // Controlador para buscar turnos disponibles por fecha, especialidad y médico
-export const getAvailableAppointmentsController = async (req: Request, res: Response) => {
+export const getAvailableAppointmentsController = async ( req: Request, res: Response ) => {
   try {
-    const { date } = req.query;
-    const appointmentRepository = AppDataSource.getRepository(Appointment);
+    const {
+      date,
+      tipo,
+      especialidad,
+      practica,
+      medico,
+    } = req.query;
 
-    let whereCondition: any = { status: "active" };
+    const appointmentRepository =
+      AppDataSource.getRepository(Appointment);
 
-    // 1. Como `date` es un varchar ("YYYY-MM-DD"), filtramos por el string exacto recibido
+    const queryBuilder = appointmentRepository
+      .createQueryBuilder("appointment")
+      .leftJoinAndSelect("appointment.medico", "medico")
+      .leftJoinAndSelect("medico.specialty", "specialty")
+      .leftJoinAndSelect("medico.practices", "practices")
+      .leftJoinAndSelect("appointment.user", "user")
+      .where("appointment.status = :status", {
+        status: "active",
+      })
+      .andWhere("appointment.userId IS NULL");
+
+    // FECHA
     if (date) {
-      whereCondition.date = date as string;
+      queryBuilder.andWhere(
+        "appointment.date = :date",
+        { date }
+      );
     }
 
-    // 4. Buscamos y traemos las relaciones de user y medico para que la UI tenga toda la info
-    const appointments = await appointmentRepository.find({
-      where: whereCondition,
-      relations: {
-        user: true,
-        medico: {
-          specialty: true,
-        },
-      },
-      order: {
-        time: "ASC",
-      },
-    });
+    // TIPO: especialidad o practica
+    if (tipo) {
+      queryBuilder.andWhere(
+        "appointment.tipo = :tipo",
+        { tipo }
+      );
+    }
 
-    console.log("Turnos encontrados:", appointments);
+    // ESPECIALIDAD
+    if (especialidad) {
+      queryBuilder.andWhere(
+        "appointment.especialidad = :especialidad",
+        { especialidad }
+      );
+    }
+
+    // PRÁCTICA
+    if (practica) {
+      queryBuilder.andWhere(
+        "appointment.practica = :practica",
+        { practica }
+      );
+    }
+
+    // MÉDICO
+    if (medico) {
+      queryBuilder.andWhere(
+        "medico.id = :medicoId",
+        {
+          medicoId: Number(medico),
+        }
+      );
+    }
+
+    const appointments = await queryBuilder
+      .orderBy("appointment.time", "ASC")
+      .getMany();
+
+    console.log(
+      `Turnos disponibles encontrados: ${appointments.length}`
+    );
 
     return res.status(200).json(appointments);
 
   } catch (error: any) {
-    return res.status(500).json({ message: "Error al obtener turnos disponibles", error: error.message });
+    console.error(
+      "Error al obtener turnos disponibles:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Error al obtener turnos disponibles",
+      error: error.message,
+    });
   }
 };
 
@@ -228,10 +283,7 @@ export const seedAppointments = async () => {
           * Vamos rotando entre las prácticas que
           * realmente realiza este médico.
           */
-    const practice =
-      doctor.practices[
-        practiceIndex % doctor.practices.length
-      ];
+            const practice = doctor.practices[ practiceIndex % doctor.practices.length ];
 
     if (practice) {
       const appointment = appointmentRepo.create({
@@ -326,6 +378,92 @@ export const getActiveDatesController = async (req: Request, res: Response) => {
     return res.status(500).json({ 
       message: "Error al obtener fechas disponibles", 
       error: error.message 
+    });
+  }
+};
+
+export const reserveAppointmentController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const appointmentId = Number(req.params.id);
+    const { userId } = req.body;
+
+    if (!appointmentId || !userId) {
+      return res.status(400).json({
+        error: "appointmentId y userId son obligatorios",
+      });
+    }
+
+    const appointmentRepository =
+      AppDataSource.getRepository(Appointment);
+
+    const userRepository =
+      AppDataSource.getRepository(User);
+
+    const appointment =
+      await appointmentRepository.findOne({
+        where: {
+          id: appointmentId,
+        },
+        relations: {
+          user: true,
+          medico: {
+            specialty: true,
+          },
+        },
+      });
+
+    if (!appointment) {
+      return res.status(404).json({
+        error: "Turno no encontrado",
+      });
+    }
+
+    // Si ya tiene usuario, alguien ya lo reservó
+    if (appointment.user) {
+      return res.status(409).json({
+        error: "Este turno ya fue reservado",
+      });
+    }
+
+    if (appointment.status !== "active") {
+      return res.status(409).json({
+        error: "Este turno ya no está disponible",
+      });
+    }
+
+    const user = await userRepository.findOne({
+      where: {
+        id: Number(userId),
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: "Usuario no encontrado",
+      });
+    }
+
+    appointment.user = user;
+
+    const reservedAppointment =
+      await appointmentRepository.save(appointment);
+
+    return res.status(200).json(
+      reservedAppointment
+    );
+
+  } catch (error: any) {
+    console.error(
+      "Error al reservar turno:",
+      error
+    );
+
+    return res.status(500).json({
+      error: "Error al reservar el turno",
+      message: error.message,
     });
   }
 };
